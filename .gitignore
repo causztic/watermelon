@@ -56,3 +56,4 @@ freeline_project_description.json
 
 # Mac stuff
 *.DS_Store
+*google_maps_api.xml
