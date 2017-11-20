@@ -67,29 +67,30 @@ public class DistanceSolver {
     public DistanceSolver(double[] latlng, Location[] locations, int budget){
 
         // create the root vertex and the other locations as vertices.
-        // The root does not get added into the list.
         root = new Vertex("root", latlng);
+        vertices.add(root);
         for (Location location: locations){
             vertices.add(new Vertex(location.getName()));
         }
 
-        // for every vertex, link to each other vertex. No other vertex links back to the root.
-        for (Vertex vertex: vertices){
-            // add an edge for a MODE.
-            for (MODE mode: MODE.values()){
-                edges.add(new Edge(root, vertex, 0, 0, mode));
-            }
-        }
-
-        // for all the vertices that are not root, generate a combination of edges per mode.
+        // for every vertex, link to each other vertex. The result is a graph of undirected edges,
+        // as the cost and timing does not change when the direction is reversed.
         for (Vertex vertex: vertices){
             for (Vertex vertex2: vertices){
-                if (!vertex.equals(vertex2)){
-                    for (MODE mode: MODE.values()){
-                        edges.add(new Edge(vertex, vertex2, 0, 0, mode));
-                    }
+                if (!vertex.equals(vertex2)){ // no edge to itself
+                    // create 6 edges. 2 for bidirectional * 3 modes.
+                    edges.add(new Edge(vertex, vertex2, 0,0, MODE.PUBLIC));
+                    edges.add(new Edge(vertex, vertex2, 0,0, MODE.TAXI));
+                    edges.add(new Edge(vertex, vertex2, 0,0, MODE.WALK));
+
+                    edges.add(new Edge(vertex2, vertex, 0,0, MODE.PUBLIC));
+                    edges.add(new Edge(vertex2, vertex, 0,0, MODE.TAXI));
+                    edges.add(new Edge(vertex2, vertex, 0,0, MODE.WALK));
                 }
             }
+            // remove first vertex as it is linked to all other vertices already.
+            vertices.remove(vertex);
         }
+
     }
 }

@@ -5,7 +5,7 @@ package istd.code;
  */
 
 public enum MODE {
-        WALK,
-        PUBLIC,
-        TAXI
+        PUBLIC, // public transport
+        TAXI,  // taxi
+        WALK
 };
