@@ -1,4 +1,4 @@
-package istd.code;
+package istd.graph;
 
 /**
  * Created by yaojie on 20/11/17.
