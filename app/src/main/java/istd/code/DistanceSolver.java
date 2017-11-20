@@ -1,5 +1,6 @@
 package istd.code;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -63,8 +64,13 @@ public class DistanceSolver {
     private Vertex root;
     private List<Vertex> vertices;
     private List<Edge> edges;
+    private int budget;
 
     public DistanceSolver(double[] latlng, Location[] locations, int budget){
+
+        this.budget = budget;
+        this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
 
         // create the root vertex and the other locations as vertices.
         root = new Vertex("root", latlng);
@@ -91,6 +97,6 @@ public class DistanceSolver {
             // remove first vertex as it is linked to all other vertices already.
             vertices.remove(vertex);
         }
-
     }
+
 }
