@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,14 +24,15 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    LatLng currentLatLng;
+    public double[] currentLatLng;
     private EditText currentLoc;
 
     @Override
@@ -51,9 +54,6 @@ public class MainActivity extends AppCompatActivity {
             LocationListener locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    if(location!=null) {
-                        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    }
                 }
 
                 @Override
@@ -77,11 +77,33 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
             }
 
+            // Get last location from GPS, if failed, then NETWORK.
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location == null) {
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            double currentLatitude = location.getLatitude();
+            double currentLongitude = location.getLongitude();
+            currentLatLng = new double[] {currentLatitude, currentLongitude};
+
             currentLoc = findViewById(R.id.CurrentLocationText);
-            if (currentLatLng==null) currentLoc.setText("FUCK LOL u got null");
-            else currentLoc.setText("is ok");
+
+            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            try {
+                List<Address> addressList = geocoder.getFromLocation(currentLatitude, currentLongitude, 1);
+                if (addressList != null) {
+                    String confirmedAddress = addressList.get(0).getAddressLine(0);
+                    currentLoc.setText(confirmedAddress);
+                } else {
+                    currentLoc.setText("Unlisted location");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         // Update the budget text to reflect the budget slider value.
