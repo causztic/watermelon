@@ -1,82 +1,102 @@
 {
   "places": [{
     "name": "Abdul Gaffoor Mosque",
+    "category": "worship",
     "lat": 1.3043995,
     "lng": 103.8515124
   }, {
     "name": "Al-Abrar Mosque",
+    "category": "worship",
     "lat": 1.280258,
     "lng": 103.847340
   },{
     "name": "ArtScience Museum",
+    "category": "museum",
     "lat": 1.286274,
     "lng": 103.859266
   },{
     "name": "Asian Civilisations Museum",
+    "category": "museum",
     "lat": 1.287497,
     "lng": 103.851386
   }, {
     "name": "Bright Hill Temple",
+    "category": "worship",
     "lat": 1.360979,
     "lng": 103.836175
   }, {
     "name": "Buddha Tooth Relic Temple",
+    "category": "worship",
     "lat": 1.281399,
     "lng": 103.844268
   }, {
     "name": "Bukit Timah Nature Reserve",
+    "category": "nature",
     "lat": 1.348393,
     "lng": 103.777463
   }, {
     "name": "Chijmes",
+    "category": "party",
     "lat": 1.295059,
     "lng": 103.852152
   }, {
     "name": "Chinatown Heritage Centre",
+    "category": "museum",
     "lat": 1.283508,
     "lng": 103.844352
   }, {
     "name": "Chinese and Japanese Gardens",
+    "category": "nature",
     "lat": 1.338987,
     "lng": 103.729753
   }, {
     "name": "East Coast Park",
+    "category": "nature",
     "lat": 1.300784,
     "lng": 103.912187
   }, {
     "name": "Esplanade - Theatres on The Bay",
+    "category": "arts",
     "lat": 1.289793,
     "lng": 103.855817
   }, {
     "name": "Fort Canning Park",
+    "category": "nature",
     "lat": 1.294115,
     "lng": 103.846307
   }, {
     "name": "Gardens by the Bay",
+    "category": "nature",
     "lat": 1.281568,
     "lng": 103.863613
   }, {
     "name": "Geylang Serai Market",
+    "category": "food",
     "lat": 1.316728,
     "lng": 103.898277
   }, {
     "name": "G-Max Reverse Bungy",
+    "category": "party",
     "lat": 1.290504,
     "lng": 103.846663
   }, {
     "name": "Haw Par Villa",
+    "category": "museum",
     "lat": 1.283566,
     "lng": 103.781643
   }, {
     "name": "Istana",
+    "category": "attraction",
     "lat": 1.306996,
     "lng": 103.843085
   }, {
     "name": "Jurong Bird Park",
+    "category": "attraction",
     "lat": 1.318707,
     "lng": 103.706442
   }, {
     "name": "Lau Pa Sat",
+    "category": "food",
     "lat": 1.280684,
     "lng": 103.850444
   }, {
