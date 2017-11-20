@@ -1,5 +1,4 @@
-{
-  "places": [{
+[{
     "name": "Abdul Gaffoor Mosque",
     "category": "worship",
     "lat": 1.3043995,
@@ -209,5 +208,4 @@
     "category": "attraction",
     "lat": 1.404348,
     "lng": 103.793023
-  }]
-}
+}]

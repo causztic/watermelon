@@ -8,6 +8,12 @@ package istd.code;
 public class Location {
     private String name;
     private String category;
-    private double[] latlng;
+    private double lat;
+    private double lng;
     private String marker;
+
+    @Override
+    public String toString() {
+        return String.format("%s [%s]: [%f,%f] - %s", name, category, lat, lng, marker);
+    }
 }

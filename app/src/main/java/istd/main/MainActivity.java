@@ -11,6 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import istd.code.Location;
+import istd.code.LocationFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(new Intent(MainActivity.this, MapsActivity.class));
             }
         });
-
+        // to get locations based on json..
+        for (Location l: LocationFactory.createLocations(getApplicationContext())){
+            System.out.println(l);
+        }
     }
 
     @Override
