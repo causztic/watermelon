@@ -16,24 +16,36 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    public double[] currentLatLng;
-    private EditText currentLoc;
+    // Variables to be accessed by other activities
+    public double[] currentLatLng; // {lat, lng}
+    public Place[] placeList;
+
+    // Variables used within MainActivity
+    private TextView currentLoc;
+    private TextView visitingText;
+    private List<String> listOfStrings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Do the location check.
         if (!isLocationEnabled()) {
+            // Alert the user to turn on location services.
             showAlert();
         } else {
+
+            // Do a bunch of location stuff
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             LocationListener locationListener = new LocationListener() {
                 @Override
@@ -69,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+            // Check permissions in manifest for accessing location
+            // This is required to avoid a crash in case of null return when no permissions
             if (locationManager != null) {
                 int MY_PERMISSIONS = 0;
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -80,16 +97,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            // Get last location from GPS, if failed, then NETWORK.
+            // (Hacky) Get last location from GPS, if failed, then NETWORK.
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location == null) {
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             }
+
+            // Edit the text field showing the current location.
+            currentLoc = findViewById(R.id.CurLocationText);
             double currentLatitude = location.getLatitude();
             double currentLongitude = location.getLongitude();
-            currentLatLng = new double[] {currentLatitude, currentLongitude};
-
-            currentLoc = findViewById(R.id.CurrentLocationText);
+            //currentLatLng = new double[] {currentLatitude, currentLongitude};
 
             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
             try {
@@ -102,9 +120,73 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             } catch (IOException e) {
+                // Must catch somehow.
                 e.printStackTrace();
             }
         }
+
+
+        // Manage the list of entered locations.
+
+        ImageView addLocationButton = findViewById(R.id.EnterLocationButton);
+        visitingText = findViewById(R.id.VisitingText);
+
+
+        // Run a search for matching Places as the user types the desired location.
+
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                .build();
+        autocompleteFragment.setFilter(typeFilter);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                listOfStrings.add(String.valueOf(place.getName()));
+                StringBuilder sentence = new StringBuilder();
+                for (int i = 0; i < listOfStrings.size(); i++) {
+
+                    // if one word
+                    if (listOfStrings.size() == 1) {
+                        sentence.append(listOfStrings.get(i));
+                        break;
+                    }
+
+                    // if not last word
+                    if (i != listOfStrings.size()-1) {
+                        sentence.append(listOfStrings.get(i));
+                        sentence.append(", ");
+                    }
+                    // if last word
+                    else {
+                        sentence.append("and ");
+                        sentence.append(listOfStrings.get(i));
+                    }
+                }
+                visitingText.setText("Today I'll explore " + sentence.toString() + "!");
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("Joel", "An error occurred: " + status);
+            }
+        });
+
+
+        addLocationButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // add selected verified location to list of locations
+            }
+        });
+
+
 
         // Update the budget text to reflect the budget slider value.
         SeekBar budgetBar = findViewById(R.id.BudgetBar);
@@ -113,11 +195,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
                 int updatedBudget = seekBar.getProgress();
-                if (updatedBudget < 51) {
-                    ((TextView) findViewById(R.id.budgetValue)).setText("$" + Integer.toString(updatedBudget));
-                } else {
+                ((TextView) findViewById(R.id.budgetValue)).setText("$" + Integer.toString(updatedBudget));
+
+                if (updatedBudget == 0) {
+                    ((TextView) findViewById(R.id.BudgetBlurb)).setText("Oops. Better luck hitching a ride.");
+                }
+                if (updatedBudget > 0 && updatedBudget < 51) {
+                    ((TextView) findViewById(R.id.BudgetBlurb)).setText("");
+                }
+                if (updatedBudget == 51) {
                     ((TextView) findViewById(R.id.budgetValue)).setText("∞");
+                    ((TextView) findViewById(R.id.BudgetBlurb)).setText("Do consider donating to watermelon's developers.");
                 }
             }
 
@@ -130,8 +220,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         Button button = (Button) findViewById(R.id.mapButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

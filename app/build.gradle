@@ -24,6 +24,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.google.android.gms:play-services-maps:11.6.0'
+    implementation 'com.google.android.gms:play-services-places:11.6.0'
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'me.xdrop:fuzzywuzzy:1.1.9'
     testImplementation 'junit:junit:4.12'
