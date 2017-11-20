@@ -101,90 +101,112 @@
     "lng": 103.850444
   }, {
     "name": "Telok Ayer Market",
+    "category": "food",
     "lat": 1.280684,
     "lng": 103.850444
   }, {
     "name": "Malay Heritage Centre",
+    "category": "museum",
     "lat": 1.302750,
     "lng": 103.860001
   }, {
     "name": "Marina Barrage",
+    "category": "attraction",
     "lat": 1.280528,
     "lng": 103.871175
   }, {
     "name": "Maxwell Road Hawker Centre",
+    "category": "food",
     "lat": 1.280431,
     "lng": 103.844822
   }, {
     "name": "Merlion Park",
+    "category": "attraction",
     "lat": 1.286789,
     "lng": 103.854501
   }, {
     "name": "Mount Faber Park",
+    "category": "nature",
     "lat": 1.273786,
     "lng": 103.817496
   }, {
     "name": "National Museum of Singapore",
+    "category": "museum",
     "lat": 1.296638,
     "lng": 103.848665
   }, {
     "name": "Peranakan Museum",
+    "category": "museum",
     "lat": 1.294367,
     "lng": 103.849039
   }, {
     "name": "Red Dot Design Museum",
+    "category": "museum",
     "lat": 1.280147,
     "lng": 103.856321
   }, {
     "name": "Sentosa",
+    "category": "attraction",
     "lat": 1.249404,
     "lng": 103.830321
   }, {
     "name": "Singapore Art Museum",
+    "category": "museum",
     "lat": 1.297307,
     "lng": 103.851062
   }, {
     "name": "Singapore Botanic Gardens",
+    "category": "nature",
     "lat": 1.313840,
     "lng": 103.815914
   }, {
     "name": "Singapore Discovery Centre",
+    "category": "attraction",
     "lat": 1.332690,
     "lng": 103.678943
   }, {
     "name": "Singapore Flyer",
+    "category": "attraction",
     "lat": 103.678943,
     "lng": 103.863137
   }, {
     "name": "Singapore River",
+    "category": "party",
     "lat": 1.289117,
     "lng": 103.840466
   }, {
     "name": "Sri Mariamman Temple",
+    "category": "museum",
     "lat": 1.282685,
     "lng": 103.845130
   }, {
     "name": "Sultan Mosque",
+    "category": "museum",
     "lat": 1.302242,
     "lng": 103.859035
   }, {
     "name": "Sungei Buloh Nature Park",
+    "category": "nature",
     "lat": 1.446719,
     "lng": 103.730149
   }, {
     "name": "Universal Studios Singapore",
+    "category": "attraction",
     "lat": 1.254042,
     "lng": 103.823808
   }, {
     "name": "Treetop Walk at MacRitchie Reservoir",
+    "category": "nature",
     "lat": 1.360729,
     "lng": 103.812522
   }, {
     "name": "The Padang",
+    "category": "attraction",
     "lat": 1.290556,
     "lng": 103.853044
   }, {
     "name": "Singapore Zoo",
+    "category": "attraction",
     "lat": 1.404348,
     "lng": 103.793023
   }]
