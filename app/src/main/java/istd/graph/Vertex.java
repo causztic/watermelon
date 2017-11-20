@@ -28,6 +28,6 @@ public class Vertex {
 
     @Override
     public String toString() {
-        return name;
+        return name.equals("root") ? String.format("%f,%f", latlng[0], latlng[1]) : name;
     }
 }

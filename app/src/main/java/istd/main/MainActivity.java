@@ -11,9 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import java.util.Arrays;
+
 import istd.code.DistanceSolver;
 import istd.code.Location;
 import istd.code.LocationFactory;
+import istd.graph.Graph;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +41,12 @@ public class MainActivity extends AppCompatActivity {
         // to get locations based on json..
         Location[] locations = LocationFactory.createLocations(getApplicationContext());
         double[] latlng = {1.3732980,103.9608250};
-        DistanceSolver ds = new DistanceSolver(latlng, locations, 10);
+        try {
+            Graph graph = new Graph(latlng, Arrays.asList(locations).subList(0, 3), 10 );
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override

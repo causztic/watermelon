@@ -1,5 +1,13 @@
 package istd.graph;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +21,7 @@ import istd.code.Location;
 
 public class Graph {
 
+    private final String PHANTOM_URL = "http://localhost:8080/";
     private Vertex root;
     private List<Vertex> vertices;
     private List<Edge> edges;
@@ -30,7 +39,42 @@ public class Graph {
         return budget;
     }
 
-    public Graph(double[] latlng, Location[] locations, int budget){
+    private Object[] getPriceAndTime(Vertex v1, Vertex v2, MODE mode) throws IOException, JSONException{
+        Object[] results = new Object[2];
+        String officialMode;
+
+        switch (mode){
+            case TAXI:
+                officialMode = "t";
+                break;
+            case PUBLIC:
+                officialMode = "pt";
+                break;
+            default:
+                officialMode = null; // shouldn't reach here.
+                break;
+        }
+
+        URL phantomUrl = new URL(PHANTOM_URL + v1.toString() + "," + v2.toString() + "," + officialMode);
+        HttpURLConnection urlConnection = (HttpURLConnection) phantomUrl.openConnection();
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                builder.append(line + "\n");
+            }
+            System.out.println(builder.toString());
+            JSONObject json = new JSONObject(builder.toString());
+            results[0] = json.getDouble("price");
+            results[1] = json.getInt("time");
+        } finally {
+            urlConnection.disconnect();
+        }
+        return results;
+    }
+
+    public Graph(double[] latlng, List<Location> locations, int budget) throws IOException, JSONException{
 
         this.budget = budget;
         this.vertices = new ArrayList<>();
@@ -51,12 +95,15 @@ public class Graph {
                     // create 6 edges. 2 for bidirectional * 3 modes.
                     // we don't have accurate walk data, so just multiply the public travel time by 3.
 
-                    int publicTravelTime = 0;
-                    int taxiTravelTime = 0;
-                    int walkingTravelTime = publicTravelTime * 3;
+                    Object[] publicResults = getPriceAndTime(vertex, vertex2, MODE.PUBLIC);
+                    Object[] taxiResults = getPriceAndTime(vertex, vertex2, MODE.TAXI);
 
-                    double publicCost = 0.0;
-                    double taxiCost = 0.0;
+                    int publicTravelTime = (int) publicResults[1];
+                    int taxiTravelTime = (int) taxiResults[1];
+                    double publicCost = (double) publicResults[0];
+                    double taxiCost = (double) taxiResults[0];
+
+                    int walkingTravelTime = publicTravelTime * 3;
 
                     // call watermelon-phantom to update cost and travelTime.
                     if (publicCost < budget) {
