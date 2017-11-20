@@ -61,7 +61,7 @@ public class DistanceSolver {
         for (Edge edge : edges) {
             if (edge.getSource().equals(node)
                     && edge.getDestination().equals(target)) {
-                return edge.getCost();
+                return edge.getTravelTime();
             }
         }
         throw new RuntimeException("Should not happen");

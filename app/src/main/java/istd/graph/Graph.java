@@ -50,13 +50,28 @@ public class Graph {
                 if (!vertex.equals(vertex2)){ // no edge to itself
                     // create 6 edges. 2 for bidirectional * 3 modes.
                     // we don't have accurate walk data, so just multiply the public travel time by 3.
-                    edges.add(new Edge(vertex, vertex2, 0,0, MODE.PUBLIC));
-                    edges.add(new Edge(vertex, vertex2, 0,0, MODE.TAXI));
-                    edges.add(new Edge(vertex, vertex2, 0,0, MODE.WALK));
 
-                    edges.add(new Edge(vertex2, vertex, 0,0, MODE.PUBLIC));
-                    edges.add(new Edge(vertex2, vertex, 0,0, MODE.TAXI));
-                    edges.add(new Edge(vertex2, vertex, 0,0, MODE.WALK));
+                    int publicTravelTime = 0;
+                    int taxiTravelTime = 0;
+                    int walkingTravelTime = publicTravelTime * 3;
+
+                    double publicCost = 0.0;
+                    double taxiCost = 0.0;
+
+                    // call watermelon-phantom to update cost and travelTime.
+                    if (publicCost < budget) {
+                        // only add edges if the budget at least allows this mode of transport.
+                        edges.add(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
+                        edges.add(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
+                    }
+
+                    if (taxiCost < budget) {
+                        edges.add(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
+                        edges.add(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
+                    }
+
+                    edges.add(new Edge(vertex, vertex2, walkingTravelTime,0, MODE.WALK));
+                    edges.add(new Edge(vertex2, vertex, walkingTravelTime,0, MODE.WALK));
                 }
             }
             // remove first vertex as it is linked to all other vertices already.
