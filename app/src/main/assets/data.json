@@ -1,14 +1,4 @@
 [{
-    "name": "Abdul Gaffoor Mosque",
-    "category": "worship",
-    "lat": 1.3043995,
-    "lng": 103.8515124
-  }, {
-    "name": "Al-Abrar Mosque",
-    "category": "worship",
-    "lat": 1.280258,
-    "lng": 103.847340
-  },{
     "name": "ArtScience Museum",
     "category": "museum",
     "lat": 1.286274,

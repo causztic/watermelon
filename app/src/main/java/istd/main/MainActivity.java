@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Location[] locations = LocationFactory.createLocations(getApplicationContext());
         double[] latlng = {1.3732980,103.9608250};
         try {
-            Graph graph = new Graph(latlng, Arrays.asList(locations).subList(0, 3), 10 );
+            Graph graph = new Graph(latlng, Arrays.asList(locations).subList(1, 3), 10 );
         } catch (Exception e){
             e.printStackTrace();
         }
