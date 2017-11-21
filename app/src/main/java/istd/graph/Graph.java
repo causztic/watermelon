@@ -105,6 +105,8 @@ public class Graph extends AsyncTask<String, Void, Object[]> {
             vertices.add(new Vertex(location.getName()));
         }
 
+        getPriceAndTime(vertices.get(0), vertices.get(1), MODE.PUBLIC);
+
         // for every vertex, link to each other vertex. The result is a graph of undirected edges,
         // as the cost and timing does not change when the direction is reversed.
         for (Vertex vertex: vertices){
