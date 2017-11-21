@@ -10,8 +10,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import istd.code.DistanceSolver;
 import istd.code.Location;
 
 /**
@@ -124,6 +126,17 @@ public class Graph extends AsyncTask<String, Void, Void> {
             it.remove();
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        // call distance solver to solve.
+        DistanceSolver ds = new DistanceSolver(this);
+        ds.solve();
+        LinkedList<Vertex> path = ds.getPath(vertices.get(vertices.size() - 1));
+        for (Vertex vertex : path) {
+            System.out.println(vertex);
+        }
     }
 
     public Graph(double[] latlng, List<Location> locations, int budget) throws Exception{
