@@ -2,17 +2,15 @@ package istd.graph;
 
 import android.os.AsyncTask;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import istd.code.Location;
 
@@ -22,9 +20,9 @@ import istd.code.Location;
  * Passed into DistanceSolver to solve.
  */
 
-public class Graph extends AsyncTask<String, Void, Object[]> {
+public class Graph extends AsyncTask<String, Void, Void> {
 
-    private final String PHANTOM_URL = "http://127.0.0.1:8080/";
+    private final String PHANTOM_URL = "http://10.0.2.2:8080/";
     private Vertex root;
     private List<Vertex> vertices;
     private List<Edge> edges;
@@ -42,54 +40,90 @@ public class Graph extends AsyncTask<String, Void, Object[]> {
         return budget;
     }
 
-    private void getPriceAndTime(Vertex v1, Vertex v2, MODE mode) throws Exception {
+    private void generateAllEdges(){
+        this.execute(PHANTOM_URL);
+    }
 
-        String officialMode;
+    private Object[] callPhantom(String url, String vertex1, String vertex2, MODE mode){
+        Object[] results = new Object[2];
+        HttpURLConnection urlConnection = null;
+        String specialMode;
 
-        switch (mode) {
-            case TAXI:
-                officialMode = "t";
-                break;
+        switch (mode){
             case PUBLIC:
-                officialMode = "pt";
+                specialMode = "pt";
+                break;
+            case TAXI:
+                specialMode = "t";
                 break;
             default:
-                officialMode = "c"; // shouldn't reach here, use car.
+                specialMode = "c";
                 break;
         }
 
-        String phantomURL = PHANTOM_URL + v1.toString() + "/" + v2.toString() + "/" + officialMode;
-        this.execute(phantomURL);
-    }
-
-    protected Object[] doInBackground(String... urls){
-        System.out.println(urls[0].toString());
-        Object[] results = new Object[2];
-        HttpURLConnection urlConnection = null;
         try {
-            urlConnection = (HttpURLConnection) new URL(urls[0]).openConnection();
+            urlConnection = (HttpURLConnection) new URL(url + "/" + vertex1 + "/" + vertex2 + "/" + specialMode).openConnection();
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder builder = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
                 builder.append(line + "\n");
             }
+            System.out.println("Request: " + vertex1 + " to " + vertex2);
             System.out.println("Response: " + builder.toString());
             JSONObject json = new JSONObject(builder.toString());
             results[0] = json.getDouble("price");
             results[1] = json.getInt("time");
         } catch (Exception e){
-           e.printStackTrace();
+            e.printStackTrace();
         } finally {
             if (urlConnection != null)
                 urlConnection.disconnect();
         }
         return results;
     }
+    protected Void doInBackground(String... urls){
+        // for every vertex, link to each other vertex. The result is a graph of undirected edges,
+        // as the cost and timing does not change when the direction is reversed.
+        for (Iterator<Vertex> it = vertices.iterator(); it.hasNext(); ){
+            Vertex vertex = it.next();
 
-    @Override
-    protected void onPostExecute(Object[] objects) {
-        System.out.println(String.format("%f %f", objects[0], objects[1]));
+            for (Iterator<Vertex> it2 = vertices.iterator(); it2.hasNext(); ){
+                Vertex vertex2 = it2.next();
+                if (!vertex.equals(vertex2)){ // no edge to itself
+                    System.out.println(urls[0].toString());
+                    Object[] publicResults = callPhantom(urls[0], vertex.toString(), vertex2.toString(), MODE.PUBLIC);
+                    Object[] taxiResults = callPhantom(urls[0], vertex.toString(), vertex2.toString(), MODE.TAXI);
+                    // create 6 edges. 2 for bidirectional * 3 modes.
+                    // we don't have accurate walk data, so just multiply the public travel time by 3.
+
+                    int publicTravelTime = (int) publicResults[1];
+                    int taxiTravelTime = (int) taxiResults[1];
+                    double publicCost = (double) publicResults[0];
+                    double taxiCost = (double) taxiResults[0];
+
+                    int walkingTravelTime = publicTravelTime * 3;
+
+                    // call watermelon-phantom to update cost and travelTime.
+                    if (publicCost < budget) {
+                        // only add edges if the budget at least allows this mode of transport.
+                        edges.add(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
+                        edges.add(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
+                    }
+
+                    if (taxiCost < budget) {
+                        edges.add(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
+                        edges.add(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
+                    }
+
+                    edges.add(new Edge(vertex, vertex2, walkingTravelTime,0, MODE.WALK));
+                    edges.add(new Edge(vertex2, vertex, walkingTravelTime,0, MODE.WALK));
+                }
+            }
+            // remove first vertex as it is linked to all other vertices already.
+            it.remove();
+        }
+        return null;
     }
 
     public Graph(double[] latlng, List<Location> locations, int budget) throws Exception{
@@ -105,44 +139,7 @@ public class Graph extends AsyncTask<String, Void, Object[]> {
             vertices.add(new Vertex(location.getName()));
         }
 
-        getPriceAndTime(vertices.get(0), vertices.get(1), MODE.PUBLIC);
+        generateAllEdges();
 
-        // for every vertex, link to each other vertex. The result is a graph of undirected edges,
-        // as the cost and timing does not change when the direction is reversed.
-        for (Vertex vertex: vertices){
-            for (Vertex vertex2: vertices){
-                if (!vertex.equals(vertex2)){ // no edge to itself
-                    // create 6 edges. 2 for bidirectional * 3 modes.
-                    // we don't have accurate walk data, so just multiply the public travel time by 3.
-
-                    // getPriceAndTime(vertex, vertex2, MODE.PUBLIC);
-                    // getPriceAndTime(vertex, vertex2, MODE.TAXI);
-
-//                    int publicTravelTime = (int) publicResults[1];
-//                    int taxiTravelTime = (int) taxiResults[1];
-//                    double publicCost = (double) publicResults[0];
-//                    double taxiCost = (double) taxiResults[0];
-
-//                    int walkingTravelTime = publicTravelTime * 3;
-//
-//                    // call watermelon-phantom to update cost and travelTime.
-//                    if (publicCost < budget) {
-//                        // only add edges if the budget at least allows this mode of transport.
-//                        edges.add(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
-//                        edges.add(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
-//                    }
-//
-//                    if (taxiCost < budget) {
-//                        edges.add(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
-//                        edges.add(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
-//                    }
-
-//                    edges.add(new Edge(vertex, vertex2, walkingTravelTime,0, MODE.WALK));
-//                    edges.add(new Edge(vertex2, vertex, walkingTravelTime,0, MODE.WALK));
-                }
-            }
-            // remove first vertex as it is linked to all other vertices already.
-            vertices.remove(vertex);
-        }
     }
 }
