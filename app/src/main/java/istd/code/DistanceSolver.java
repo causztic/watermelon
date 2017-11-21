@@ -19,22 +19,26 @@ import istd.graph.Vertex;
 
 public class DistanceSolver {
 
-    private Set<Vertex> settledNodes = new HashSet<>();
-    private Set<Vertex> unSettledNodes = new HashSet<>();
-    private Map<Vertex, Double> distance = new HashMap<>();
-    private Map<Vertex, Vertex> predecessors = new HashMap<>();
-    private Vertex root;
+    private Set<Vertex> settledNodes;
+    private Set<Vertex> unSettledNodes;
+    private Map<Vertex, Double> distance;
+    private Map<Vertex, Vertex> predecessors;
     private List<Vertex> vertices;
     private List<Edge> edges;
 
     public DistanceSolver(Graph graph){
-        this.vertices = new ArrayList<Vertex>(graph.getVertices());
-        this.edges = new ArrayList<Edge>(graph.getEdges());
+        this.vertices = new ArrayList<>(graph.getVertices());
+        this.edges = new ArrayList<>(graph.getEdges());
     }
 
     public void solve() {
-        distance.put(root, 0.0);
-        unSettledNodes.add(root);
+        settledNodes = new HashSet<>();
+        unSettledNodes = new HashSet<>();
+        distance = new HashMap<>();
+        predecessors = new HashMap<>();
+
+        distance.put(this.vertices.get(0), 0.0);
+        unSettledNodes.add(this.vertices.get(0));
         while (unSettledNodes.size() > 0) {
             Vertex node = getMinimum(unSettledNodes);
             settledNodes.add(node);
