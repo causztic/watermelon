@@ -18,6 +18,10 @@ public class Vertex {
         this.latlng = null;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

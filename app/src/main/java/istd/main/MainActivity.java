@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import java.util.Arrays;
 
+import istd.code.DistanceSolver;
 import istd.code.Location;
 import istd.code.LocationFactory;
 import istd.graph.Graph;

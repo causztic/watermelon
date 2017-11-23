@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import istd.code.DistanceSolver;
 import istd.code.Location;
 
 /**
@@ -124,16 +126,19 @@ public class Graph extends AsyncTask<String, Void, Void> {
                 if (publicCost < budget) {
                     // only add edges if the budget at least allows this mode of transport.
                     edges.add(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
-                    edges.add(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
+                    if (!vertex.getName().equals("root"))
+                        edges.add(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
                 }
 
                 if (taxiCost < budget) {
                     edges.add(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
-                    edges.add(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
+                    if (!vertex.getName().equals("root"))
+                        edges.add(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
                 }
 
                 edges.add(new Edge(vertex, vertex2, walkingTravelTime, 0, MODE.WALK));
-                edges.add(new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
+                if (!vertex.getName().equals("root"))
+                    edges.add(new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
 
             }
         }
@@ -143,5 +148,9 @@ public class Graph extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         // call distance solver to solve.
+        //new DistanceSolver().bruteForce(this);
+        for (Edge edge: edges){
+            System.out.println(edge);
+        }
     }
 }
