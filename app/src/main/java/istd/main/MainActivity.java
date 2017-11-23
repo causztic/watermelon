@@ -1,14 +1,19 @@
 package istd.main;
 
 import android.content.Intent;
+import android.net.http.HttpResponseCache;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import istd.code.DistanceSolver;
@@ -39,13 +44,33 @@ public class MainActivity extends AppCompatActivity {
         // to get locations based on json..
         Location[] locations = LocationFactory.createLocations(getApplicationContext());
         double[] latlng = {1.3732980,103.9608250};
+
+        // create a http cache to hold results
+        try {
+            File httpCacheDir = new File(this.getBaseContext().getCacheDir(), "http");
+            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException e) {
+            Log.i("", "HTTP response cache installation failed:" + e);
+        }
+
         try {
             Graph graph = new Graph(latlng, Arrays.asList(locations).subList(1, 3), 10 );
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
