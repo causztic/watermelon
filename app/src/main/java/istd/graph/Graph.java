@@ -161,6 +161,7 @@ public class Graph extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         // call distance solver to solve.
-        new DistanceSolver().bruteForce(this);
+        List<Edge> mostEfficient = new DistanceSolver().bruteForce(this);
+        System.out.println("Most efficient: " + Arrays.toString(mostEfficient.toArray()));
     }
 }
