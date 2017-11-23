@@ -18,6 +18,11 @@ public class Vertex {
         this.latlng = null;
     }
 
+    // generates an identifier to find the corresponding edge based on the otherVertex it is beside.
+    public String getIdentifier(Vertex otherVertex, MODE mode){
+        return name + "->" + otherVertex.getName() + "_" + mode;
+    }
+
     public String getName() {
         return name;
     }

@@ -31,12 +31,31 @@ public class Edge {
         return mode;
     }
 
+    // Gets the identifier of the Edge. Used in a HashMap for easy lookup.
+    public String getIdentifier(){
+        return source.getName() + "->" + destination.getName() + "_" + mode;
+    }
+
     Edge(Vertex source, Vertex destination, int travelTime, double cost, MODE mode){
         this.source = source;
         this.destination = destination;
         this.travelTime = travelTime;
         this.mode = mode;
         this.cost = cost;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        else {
+            Edge edge = (Edge) obj;
+            return source.equals(edge.getSource())  && destination.equals(edge.getDestination()) && mode.equals(edge.getMode());
+        }
     }
 
     @Override

@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import istd.code.DistanceSolver;
 import istd.code.Location;
@@ -27,6 +29,7 @@ public class Graph extends AsyncTask<String, Void, Void> {
     private Vertex root;
     private List<Vertex> vertices;
     private List<Edge> edges;
+    private Map<String, Edge> edgeMap; // maps the edge to a specific string for easy lookup
     private int budget;
 
     public Graph(double[] latlng, List<Location> locations, int budget) throws Exception {
@@ -34,6 +37,7 @@ public class Graph extends AsyncTask<String, Void, Void> {
         this.budget = budget;
         this.vertices = new ArrayList<>();
         this.edges = new ArrayList<>();
+        this.edgeMap = new HashMap<>();
 
         // create the root vertex and the other locations as vertices.
         root = new Vertex("root", latlng);
@@ -44,6 +48,10 @@ public class Graph extends AsyncTask<String, Void, Void> {
 
         generateAllEdges();
 
+    }
+
+    public Map<String, Edge> getEdgeMap() {
+        return edgeMap;
     }
 
     public List<Vertex> getVertices() {
@@ -101,6 +109,11 @@ public class Graph extends AsyncTask<String, Void, Void> {
         return results;
     }
 
+    private void addToEdges(Edge edge){
+        edges.add(edge);
+        edgeMap.put(edge.getIdentifier(), edge);
+    }
+
     protected Void doInBackground(String... urls) {
         // for every vertex, link to each other vertex. The result is a graph of undirected edges,
         // as the cost and timing does not change when the direction is reversed.
@@ -125,20 +138,20 @@ public class Graph extends AsyncTask<String, Void, Void> {
                 // call watermelon-phantom to update cost and travelTime.
                 if (publicCost < budget) {
                     // only add edges if the budget at least allows this mode of transport.
-                    edges.add(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
+                    addToEdges(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
                     if (!vertex.getName().equals("root"))
-                        edges.add(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
+                        addToEdges(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
                 }
 
                 if (taxiCost < budget) {
-                    edges.add(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
+                    addToEdges(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
                     if (!vertex.getName().equals("root"))
-                        edges.add(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
+                        addToEdges(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
                 }
 
-                edges.add(new Edge(vertex, vertex2, walkingTravelTime, 0, MODE.WALK));
+                addToEdges(new Edge(vertex, vertex2, walkingTravelTime, 0, MODE.WALK));
                 if (!vertex.getName().equals("root"))
-                    edges.add(new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
+                    addToEdges(new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
 
             }
         }
@@ -148,9 +161,6 @@ public class Graph extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         // call distance solver to solve.
-        //new DistanceSolver().bruteForce(this);
-        for (Edge edge: edges){
-            System.out.println(edge);
-        }
+        new DistanceSolver().bruteForce(this);
     }
 }
