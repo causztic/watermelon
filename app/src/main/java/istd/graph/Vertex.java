@@ -1,5 +1,11 @@
 package istd.graph;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.*;
+
 /**
  * Created by yaojie on 20/11/17.
  */
@@ -7,15 +13,26 @@ package istd.graph;
 public class Vertex {
     private final String name;
     private final double[] latlng;
+    private List<Edge> edges;
 
     Vertex(String name, double[] latlng) {
         this.name = name;
         this.latlng = latlng;
+        this.edges = new ArrayList<>();
     }
 
     Vertex(String name){
         this.name = name;
         this.latlng = null;
+        this.edges = new ArrayList<>();
+    }
+
+    public void addEdge(Edge edge){
+        this.edges.add(edge);
+    }
+
+    public List<Edge> getEdges(){
+        return edges;
     }
 
     // generates an identifier to find the corresponding edge based on the otherVertex it is beside.

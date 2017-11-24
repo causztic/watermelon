@@ -5,7 +5,7 @@ package istd.graph;
  */
 
 public enum MODE {
-        PUBLIC, // public transport
         TAXI,  // taxi
+        PUBLIC, // public transport
         WALK
 };

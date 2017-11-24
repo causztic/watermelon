@@ -1,10 +1,12 @@
 package istd.graph;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by yaojie on 20/11/17.
  */
 
-public class Edge {
+public class Edge implements Comparable {
     private final Vertex source;
     private final Vertex destination;
     private final int travelTime; // travelTime in minutes.
@@ -61,5 +63,10 @@ public class Edge {
     @Override
     public String toString() {
         return source + "->" + destination + "(" + mode + ")";
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return Double.compare(this.getCost(), ((Edge)o).getCost());
     }
 }

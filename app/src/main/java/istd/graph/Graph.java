@@ -2,6 +2,8 @@ package istd.graph;
 
 import android.os.AsyncTask;
 
+import com.google.maps.model.Distance;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -109,9 +111,11 @@ public class Graph extends AsyncTask<String, Void, Void> {
         return results;
     }
 
-    private void addToEdges(Edge edge){
+    private void addToEdges(Vertex vertex, Edge edge){
         edges.add(edge);
         edgeMap.put(edge.getIdentifier(), edge);
+        vertex.addEdge(edge);
+
     }
 
     protected Void doInBackground(String... urls) {
@@ -138,20 +142,20 @@ public class Graph extends AsyncTask<String, Void, Void> {
                 // call watermelon-phantom to update cost and travelTime.
                 if (publicCost < budget) {
                     // only add edges if the budget at least allows this mode of transport.
-                    addToEdges(new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
+                    addToEdges(vertex, new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
                     if (!vertex.getName().equals("root"))
-                        addToEdges(new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
+                        addToEdges(vertex2, new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
                 }
 
                 if (taxiCost < budget) {
-                    addToEdges(new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
+                    addToEdges(vertex, new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
                     if (!vertex.getName().equals("root"))
-                        addToEdges(new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
+                        addToEdges(vertex2, new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
                 }
 
-                addToEdges(new Edge(vertex, vertex2, walkingTravelTime, 0, MODE.WALK));
+                addToEdges(vertex, new Edge(vertex, vertex2, walkingTravelTime, 0, MODE.WALK));
                 if (!vertex.getName().equals("root"))
-                    addToEdges(new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
+                    addToEdges(vertex2, new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
 
             }
         }
@@ -161,7 +165,10 @@ public class Graph extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         // call distance solver to solve.
-        List<Edge> mostEfficient = new DistanceSolver().bruteForce(this);
+        DistanceSolver ds = new DistanceSolver();
+        List<Edge> mostEfficient = ds.bruteForce(this);
+        List<Edge> mostEfficient2 = ds.smartSolve(this);
         System.out.println("Most efficient: " + Arrays.toString(mostEfficient.toArray()));
+        System.out.println("Most efficient smart: " + Arrays.toString(mostEfficient2.toArray()));
     }
 }
