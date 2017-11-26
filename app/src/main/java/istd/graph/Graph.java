@@ -182,8 +182,7 @@ public class Graph extends AsyncTask<String, Void, List<Edge>> {
             mostEfficient = ds.smartSolve(this);
 
         activity.findViewById(R.id.progressBar).setVisibility(ProgressBar.GONE);
-        ArrayAdapter<Edge> adapter = new ArrayAdapter<Edge>(activity,
-                android.R.layout.simple_list_item_1, mostEfficient);
+        EdgeAdapter adapter = new EdgeAdapter(activity, mostEfficient);
         ((ListView)activity.findViewById(R.id.solverListView)).setAdapter(adapter);
     }
 }

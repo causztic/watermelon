@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -30,8 +31,25 @@ public class EdgeAdapter extends ArrayAdapter<Edge> {
         }
         // Lookup view for data population
         TextView edgeName = (TextView) convertView.findViewById(R.id.edgeName);
+        ImageView edgeMode = (ImageView) convertView.findViewById(R.id.edgeMode);
         // Populate the data into the template view using the data object
-        edgeName.setText(edge.toString());
+        switch (edge.getMode()){
+            case PUBLIC:
+                edgeMode.setImageResource(R.drawable.ic_directions_bus_black_24dp);
+                break;
+            case TAXI:
+                edgeMode.setImageResource(R.drawable.ic_local_taxi_black_24dp);
+                break;
+            case WALK:
+                edgeMode.setImageResource(R.drawable.ic_directions_walk_black_24dp);
+                break;
+            default:
+                System.out.println("should not happen");
+                break;
+        }
+        edgeMode.setColorFilter(R.color.colorPrimary);
+
+        edgeName.setText(edge.getDestination().getName() + " (" + edge.getTravelTime() + "mins)");
         // Return the completed view to render on screen
         return convertView;
     }
