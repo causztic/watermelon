@@ -2,7 +2,6 @@ package istd.main;
 
 import android.content.Intent;
 import android.net.http.HttpResponseCache;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import istd.code.DistanceSolver;
 import istd.code.Location;
 import istd.code.LocationFactory;
 import istd.graph.Graph;
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, SolverActivity.class));
             }
         });
     }
@@ -42,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         // to get locations based on json..
-        Location[] locations = LocationFactory.createLocations(getApplicationContext());
-        double[] latlng = {1.3732980,103.9608250};
-
         // create a http cache to hold results
         try {
             File httpCacheDir = new File(this.getBaseContext().getCacheDir(), "http");
@@ -53,13 +48,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.i("", "HTTP response cache installation failed:" + e);
         }
-
-        try {
-            Graph graph = new Graph(latlng, Arrays.asList(locations).subList(1, 3), 10 );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override

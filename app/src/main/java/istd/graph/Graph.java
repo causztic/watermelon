@@ -1,8 +1,12 @@
 package istd.graph;
 
+import android.app.Activity;
 import android.os.AsyncTask;
-
-import com.google.maps.model.Distance;
+import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONObject;
 
@@ -18,6 +22,7 @@ import java.util.Map;
 
 import istd.code.DistanceSolver;
 import istd.code.Location;
+import istd.main.R;
 
 /**
  * Created by yaojie on 20/11/17.
@@ -25,7 +30,7 @@ import istd.code.Location;
  * Passed into DistanceSolver to solve.
  */
 
-public class Graph extends AsyncTask<String, Void, Void> {
+public class Graph extends AsyncTask<String, Void, List<Edge>> {
 
     private final String PHANTOM_URL = "http://10.0.2.2:8080/";
     private Vertex root;
@@ -33,13 +38,15 @@ public class Graph extends AsyncTask<String, Void, Void> {
     private List<Edge> edges;
     private Map<String, Edge> edgeMap; // maps the edge to a specific string for easy lookup
     private int budget;
+    private Activity activity;
 
-    public Graph(double[] latlng, List<Location> locations, int budget) throws Exception {
+    public Graph(double[] latlng, List<Location> locations, int budget, Activity activity) throws Exception {
 
         this.budget = budget;
         this.vertices = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.edgeMap = new HashMap<>();
+        this.activity = activity;
 
         // create the root vertex and the other locations as vertices.
         root = new Vertex("root", latlng);
@@ -118,7 +125,7 @@ public class Graph extends AsyncTask<String, Void, Void> {
 
     }
 
-    protected Void doInBackground(String... urls) {
+    protected List<Edge> doInBackground(String... urls) {
         // for every vertex, link to each other vertex. The result is a graph of undirected edges,
         // as the cost and timing does not change when the direction is reversed.
         for (int i = 0; i < vertices.size(); i++) {
@@ -159,16 +166,24 @@ public class Graph extends AsyncTask<String, Void, Void> {
 
             }
         }
-        return null;
+        return edges;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(List<Edge> edges) {
         // call distance solver to solve.
         DistanceSolver ds = new DistanceSolver();
-        List<Edge> mostEfficient = ds.bruteForce(this);
-        List<Edge> mostEfficient2 = ds.smartSolve(this);
-        System.out.println("Most efficient: " + Arrays.toString(mostEfficient.toArray()));
-        System.out.println("Most efficient smart: " + Arrays.toString(mostEfficient2.toArray()));
+        // since O(n) of brute force is n! and O(n) of approximate is n^2, do brute force unless locations > 5.
+        List<Edge> mostEfficient = new ArrayList<>();
+
+        if (vertices.size() <= 5)
+            mostEfficient = ds.bruteForce(this);
+        else
+            mostEfficient = ds.smartSolve(this);
+
+        activity.findViewById(R.id.progressBar).setVisibility(ProgressBar.GONE);
+        ArrayAdapter<Edge> adapter = new ArrayAdapter<Edge>(activity,
+                android.R.layout.simple_list_item_1, mostEfficient);
+        ((ListView)activity.findViewById(R.id.solverListView)).setAdapter(adapter);
     }
 }
