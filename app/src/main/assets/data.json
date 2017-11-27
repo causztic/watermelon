@@ -19,11 +19,6 @@
     "lat": 1.281399,
     "lng": 103.844268
   }, {
-    "name": "Bukit Timah Nature Reserve",
-    "category": "nature",
-    "lat": 1.348393,
-    "lng": 103.777463
-  }, {
     "name": "Chijmes",
     "category": "party",
     "lat": 1.295059,
@@ -34,7 +29,7 @@
     "lat": 1.283508,
     "lng": 103.844352
   }, {
-    "name": "Chinese and Japanese Gardens",
+    "name": "Chinese Garden",
     "category": "nature",
     "lat": 1.338987,
     "lng": 103.729753
@@ -44,7 +39,7 @@
     "lat": 1.300784,
     "lng": 103.912187
   }, {
-    "name": "Esplanade - Theatres on The Bay",
+    "name": "Esplanade",
     "category": "arts",
     "lat": 1.289793,
     "lng": 103.855817
@@ -59,15 +54,10 @@
     "lat": 1.281568,
     "lng": 103.863613
   }, {
-    "name": "Geylang Serai Market",
+    "name": "Geylang Serai",
     "category": "food",
     "lat": 1.316728,
     "lng": 103.898277
-  }, {
-    "name": "G-Max Reverse Bungy",
-    "category": "party",
-    "lat": 1.290504,
-    "lng": 103.846663
   }, {
     "name": "Haw Par Villa",
     "category": "museum",
@@ -89,22 +79,12 @@
     "lat": 1.280684,
     "lng": 103.850444
   }, {
-    "name": "Telok Ayer Market",
-    "category": "food",
-    "lat": 1.280684,
-    "lng": 103.850444
-  }, {
-    "name": "Malay Heritage Centre",
-    "category": "museum",
-    "lat": 1.302750,
-    "lng": 103.860001
-  }, {
     "name": "Marina Barrage",
     "category": "attraction",
     "lat": 1.280528,
     "lng": 103.871175
   }, {
-    "name": "Maxwell Road Hawker Centre",
+    "name": "Maxwell Road",
     "category": "food",
     "lat": 1.280431,
     "lng": 103.844822
@@ -114,7 +94,7 @@
     "lat": 1.286789,
     "lng": 103.854501
   }, {
-    "name": "Mount Faber Park",
+    "name": "Mount Faber",
     "category": "nature",
     "lat": 1.273786,
     "lng": 103.817496
@@ -144,7 +124,7 @@
     "lat": 1.297307,
     "lng": 103.851062
   }, {
-    "name": "Singapore Botanic Gardens",
+    "name": "Botanic Gardens",
     "category": "nature",
     "lat": 1.313840,
     "lng": 103.815914
@@ -174,7 +154,7 @@
     "lat": 1.302242,
     "lng": 103.859035
   }, {
-    "name": "Sungei Buloh Nature Park",
+    "name": "Sungei Buloh Wetland Reserve",
     "category": "nature",
     "lat": 1.446719,
     "lng": 103.730149
@@ -184,15 +164,10 @@
     "lat": 1.254042,
     "lng": 103.823808
   }, {
-    "name": "Treetop Walk at MacRitchie Reservoir",
+    "name": "MacRitchie Reservoir",
     "category": "nature",
     "lat": 1.360729,
     "lng": 103.812522
-  }, {
-    "name": "The Padang",
-    "category": "attraction",
-    "lat": 1.290556,
-    "lng": 103.853044
   }, {
     "name": "Singapore Zoo",
     "category": "attraction",
