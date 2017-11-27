@@ -18,7 +18,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.net.http.HttpResponseCache;
-import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
 import android.view.View;
@@ -32,29 +31,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
-import istd.code.Location;
-import istd.code.LocationFactory;
-import istd.graph.Graph;
+import istd.code.FixedLocation;
+import istd.code.FixedLocationFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     // TODO: These are the variables to be accessed by other Activities.
-    public ArrayList<Location> locationArrayList = new ArrayList<>();
-    public int updatedBudget;
+    public static ArrayList<FixedLocation> locationArrayList = new ArrayList<>();
+    public static int updatedBudget;
 
     // Variables used within MainActivity
     private TextView currentLoc;
@@ -66,18 +59,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        InputStream raw = getResources().openRawResource(R.raw.data);
-
-        try {
-            int size = raw.available();
-            byte[] buffer = new byte[size];
-            raw.read(buffer);
-            raw.close();
-            jsonData = new String(buffer, "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         // Change status bar color for SDK21 and above.
         if (Build.VERSION.SDK_INT >= 21) {
@@ -128,7 +109,15 @@ public class MainActivity extends AppCompatActivity {
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location == null) {
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (location == null) {
+                    // if all fail, default to changi airport
+                    location = new Location("");
+                    location.setLatitude(1.3568);
+                    location.setLongitude(103.9891);
+                }
             }
+
+            locationArrayList.add(FixedLocationFactory.createFixedLocationFromLocation(location));
 
             // Edit the text field showing the current location.
             currentLoc = findViewById(R.id.CurLocationText);
@@ -141,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 if (addressList != null) {
                     String confirmedAddress = addressList.get(0).getAddressLine(0);
                     currentLoc.setText(confirmedAddress);
+
                 } else {
                     currentLoc.setText("Unlisted location");
                 }
@@ -154,16 +144,11 @@ public class MainActivity extends AppCompatActivity {
         // Run a search for matching names as the user types the desired location.
         // Open the JSON and parse
         Gson gson = new Gson();
-        Type listType = new TypeToken<List<PlaceJSON>>(){}.getType();
-        ArrayList<PlaceJSON> temp = gson.fromJson(jsonData, listType);
-        final DataJSON JSONLocationArray = new DataJSON(temp);
+        final FixedLocation[] temp = FixedLocationFactory.createLocations(this.getApplicationContext());
 
         // Update both autocompleteList and locationArrayList with the places picked.
-        for (PlaceJSON place : JSONLocationArray.getPlaceList()) {
-            autocompleteList.add(place.getName());
-            Location location = new Location(LocationManager.NETWORK_PROVIDER);
-            location.setLatitude(place.getLat());
-            location.setLongitude(place.getLng());
+        for (FixedLocation fl: temp) {
+            autocompleteList.add(fl.getName());
         }
 
         // Display the JSON places as autocomplete values
@@ -178,19 +163,15 @@ public class MainActivity extends AppCompatActivity {
                 String newPlace = (String) adapterView.getItemAtPosition(i);
                 locationStringList.add(newPlace);
                 ((TextView) findViewById(R.id.PlacesText)).setText(createPlaceMessage(locationStringList));
-                Location location = new Location(LocationManager.NETWORK_PROVIDER);
 
                 // Search for matching string
-                for (PlaceJSON p : JSONLocationArray.getPlaceList()) {
-                    if (p.getName() == newPlace) {
-                        location.setLatitude(p.getLat());
-                        location.setLongitude(p.getLng());
+                for (FixedLocation fl: temp) {
+                    if (fl.getName() == newPlace) {
+                        locationArrayList.add(fl);
+                        break;
                     }
                 }
-
-                locationArrayList.add(location);
                 visitingText.setText("");
-                Log.d("Joel", "LOCATION ADDED: " + newPlace + " at " + location.getLatitude() + ", " + location.getLongitude());
             }
         });
 
@@ -228,11 +209,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button = (Button) findViewById(R.id.mapButton);
+        Button button = findViewById(R.id.mapButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, SolverActivity.class));
+                Intent i = new Intent(MainActivity.this, SolverActivity.class);
+                MainActivity.this.startActivity(i);
             }
         });
     }
@@ -264,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLocationEnabled() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
 
     @Override
     protected void onStop(){
@@ -272,15 +255,6 @@ public class MainActivity extends AppCompatActivity {
         if (cache != null) {
             cache.flush();
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-
     }
 
     // Alert the user to turn on location settings if not on.
@@ -310,8 +284,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String createPlaceMessage(ArrayList<String> stringArrayList) {
-
-        if (stringArrayList.size() == 0) return "ayylmao";
 
         String base = "";
 

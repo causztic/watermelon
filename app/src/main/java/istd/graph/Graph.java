@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import istd.code.DistanceSolver;
-import istd.code.Location;
+import istd.code.FixedLocation;
 import istd.main.R;
 
 /**
@@ -40,7 +40,7 @@ public class Graph extends AsyncTask<String, Void, List<Edge>> {
     private int budget;
     private Activity activity;
 
-    public Graph(double[] latlng, List<Location> locations, int budget, Activity activity) throws Exception {
+    public Graph(List<FixedLocation> locations, int budget, Activity activity) throws Exception {
 
         this.budget = budget;
         this.vertices = new ArrayList<>();
@@ -49,9 +49,9 @@ public class Graph extends AsyncTask<String, Void, List<Edge>> {
         this.activity = activity;
 
         // create the root vertex and the other locations as vertices.
-        root = new Vertex("root", latlng);
+        root = new Vertex("root", locations.remove(0));
         vertices.add(root);
-        for (Location location : locations) {
+        for (FixedLocation location : locations) {
             vertices.add(new Vertex(location.getName()));
         }
 

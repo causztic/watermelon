@@ -1,11 +1,15 @@
 package istd.code;
 
+import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by yaojie on 20/11/17.
  * A Location for an attraction in Singapore.
  */
 
-public class Location {
+public class FixedLocation{
     private String name;
     private String category;
     private double lat;
@@ -62,6 +66,6 @@ public class Location {
         if (getClass() != obj.getClass())
             return false;
         else
-            return name.equals(((Location) obj).name);
+            return name.equals(((FixedLocation) obj).name);
     }
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import istd.code.FixedLocation;
+
 import static java.util.Collections.*;
 
 /**
@@ -15,8 +17,9 @@ public class Vertex {
     private final double[] latlng;
     private List<Edge> edges;
 
-    Vertex(String name, double[] latlng) {
-        this.name = name;
+    Vertex(String name, FixedLocation location) {
+        double[] latlng = { location.getLat(), location.getLng() };
+        this.name =  name;
         this.latlng = latlng;
         this.edges = new ArrayList<>();
     }
