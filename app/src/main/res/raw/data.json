@@ -1,171 +1,214 @@
 {
-  "places": [{
-    "name": "Abdul Gaffoor Mosque",
-    "lat": 1.3043995,
-    "lng": 103.8515124
-  }, {
-    "name": "Al-Abrar Mosque",
-    "lat": 1.280258,
-    "lng": 103.847340
-  },{
-    "name": "ArtScience Museum",
-    "lat": 1.286274,
-    "lng": 103.859266
-  },{
-    "name": "Asian Civilisations Museum",
-    "lat": 1.287497,
-    "lng": 103.851386
-  }, {
-    "name": "Bright Hill Temple",
-    "lat": 1.360979,
-    "lng": 103.836175
-  }, {
-    "name": "Buddha Tooth Relic Temple",
-    "lat": 1.281399,
-    "lng": 103.844268
-  }, {
-    "name": "Bukit Timah Nature Reserve",
-    "lat": 1.348393,
-    "lng": 103.777463
-  }, {
-    "name": "Chijmes",
-    "lat": 1.295059,
-    "lng": 103.852152
-  }, {
-    "name": "Chinatown Heritage Centre",
-    "lat": 1.283508,
-    "lng": 103.844352
-  }, {
-    "name": "Chinese and Japanese Gardens",
-    "lat": 1.338987,
-    "lng": 103.729753
-  }, {
-    "name": "East Coast Park",
-    "lat": 1.300784,
-    "lng": 103.912187
-  }, {
-    "name": "Esplanade - Theatres on The Bay",
-    "lat": 1.289793,
-    "lng": 103.855817
-  }, {
-    "name": "Fort Canning Park",
-    "lat": 1.294115,
-    "lng": 103.846307
-  }, {
-    "name": "Gardens by the Bay",
-    "lat": 1.281568,
-    "lng": 103.863613
-  }, {
-    "name": "Geylang Serai Market",
-    "lat": 1.316728,
-    "lng": 103.898277
-  }, {
-    "name": "G-Max Reverse Bungy",
-    "lat": 1.290504,
-    "lng": 103.846663
-  }, {
-    "name": "Haw Par Villa",
-    "lat": 1.283566,
-    "lng": 103.781643
-  }, {
-    "name": "Istana",
-    "lat": 1.306996,
-    "lng": 103.843085
-  }, {
-    "name": "Jurong Bird Park",
-    "lat": 1.318707,
-    "lng": 103.706442
-  }, {
-    "name": "Lau Pa Sat",
-    "lat": 1.280684,
-    "lng": 103.850444
-  }, {
-    "name": "Telok Ayer Market",
-    "lat": 1.280684,
-    "lng": 103.850444
-  }, {
-    "name": "Malay Heritage Centre",
-    "lat": 1.302750,
-    "lng": 103.860001
-  }, {
-    "name": "Marina Barrage",
-    "lat": 1.280528,
-    "lng": 103.871175
-  }, {
-    "name": "Maxwell Road Hawker Centre",
-    "lat": 1.280431,
-    "lng": 103.844822
-  }, {
-    "name": "Merlion Park",
-    "lat": 1.286789,
-    "lng": 103.854501
-  }, {
-    "name": "Mount Faber Park",
-    "lat": 1.273786,
-    "lng": 103.817496
-  }, {
-    "name": "National Museum of Singapore",
-    "lat": 1.296638,
-    "lng": 103.848665
-  }, {
-    "name": "Peranakan Museum",
-    "lat": 1.294367,
-    "lng": 103.849039
-  }, {
-    "name": "Red Dot Design Museum",
-    "lat": 1.280147,
-    "lng": 103.856321
-  }, {
-    "name": "Sentosa",
-    "lat": 1.249404,
-    "lng": 103.830321
-  }, {
-    "name": "Singapore Art Museum",
-    "lat": 1.297307,
-    "lng": 103.851062
-  }, {
-    "name": "Singapore Botanic Gardens",
-    "lat": 1.313840,
-    "lng": 103.815914
-  }, {
-    "name": "Singapore Discovery Centre",
-    "lat": 1.332690,
-    "lng": 103.678943
-  }, {
-    "name": "Singapore Flyer",
-    "lat": 103.678943,
-    "lng": 103.863137
-  }, {
-    "name": "Singapore River",
-    "lat": 1.289117,
-    "lng": 103.840466
-  }, {
-    "name": "Sri Mariamman Temple",
-    "lat": 1.282685,
-    "lng": 103.845130
-  }, {
-    "name": "Sultan Mosque",
-    "lat": 1.302242,
-    "lng": 103.859035
-  }, {
-    "name": "Sungei Buloh Nature Park",
-    "lat": 1.446719,
-    "lng": 103.730149
-  }, {
-    "name": "Universal Studios Singapore",
-    "lat": 1.254042,
-    "lng": 103.823808
-  }, {
-    "name": "Treetop Walk at MacRitchie Reservoir",
-    "lat": 1.360729,
-    "lng": 103.812522
-  }, {
-    "name": "The Padang",
-    "lat": 1.290556,
-    "lng": 103.853044
-  }, {
-    "name": "Singapore Zoo",
-    "lat": 1.404348,
-    "lng": 103.793023
-  }]
+  "places": [
+    {
+      "name": "Abdul Gaffoor Mosque",
+      "lat": 1.3043995,
+      "lng": 103.8515124
+    },
+    {
+      "name": "Al-Abrar Mosque",
+      "lat": 1.280258,
+      "lng": 103.847340
+    },
+    {
+      "name": "ArtScience Museum",
+      "lat": 1.286274,
+      "lng": 103.859266
+    },
+    {
+      "name": "Asian Civilisations Museum",
+      "lat": 1.287497,
+      "lng": 103.851386
+    },
+    {
+      "name": "Bright Hill Temple",
+      "lat": 1.360979,
+      "lng": 103.836175
+    },
+    {
+      "name": "Buddha Tooth Relic Temple",
+      "lat": 1.281399,
+      "lng": 103.844268
+    },
+    {
+      "name": "Bukit Timah Nature Reserve",
+      "lat": 1.348393,
+      "lng": 103.777463
+    },
+    {
+      "name": "Chijmes",
+      "lat": 1.295059,
+      "lng": 103.852152
+    },
+    {
+      "name": "Chinatown Heritage Centre",
+      "lat": 1.283508,
+      "lng": 103.844352
+    },
+    {
+      "name": "Chinese and Japanese Gardens",
+      "lat": 1.338987,
+      "lng": 103.729753
+    },
+    {
+      "name": "East Coast Park",
+      "lat": 1.300784,
+      "lng": 103.912187
+    },
+    {
+      "name": "Esplanade - Theatres on The Bay",
+      "lat": 1.289793,
+      "lng": 103.855817
+    },
+    {
+      "name": "Fort Canning Park",
+      "lat": 1.294115,
+      "lng": 103.846307
+    },
+    {
+      "name": "Gardens by the Bay",
+      "lat": 1.281568,
+      "lng": 103.863613
+    },
+    {
+      "name": "Geylang Serai Market",
+      "lat": 1.316728,
+      "lng": 103.898277
+    },
+    {
+      "name": "G-Max Reverse Bungy",
+      "lat": 1.290504,
+      "lng": 103.846663
+    },
+    {
+      "name": "Haw Par Villa",
+      "lat": 1.283566,
+      "lng": 103.781643
+    },
+    {
+      "name": "Istana",
+      "lat": 1.306996,
+      "lng": 103.843085
+    },
+    {
+      "name": "Jurong Bird Park",
+      "lat": 1.318707,
+      "lng": 103.706442
+    },
+    {
+      "name": "Lau Pa Sat",
+      "lat": 1.280684,
+      "lng": 103.850444
+    },
+    {
+      "name": "Telok Ayer Market",
+      "lat": 1.280684,
+      "lng": 103.850444
+    },
+    {
+      "name": "Malay Heritage Centre",
+      "lat": 1.302750,
+      "lng": 103.860001
+    },
+    {
+      "name": "Marina Barrage",
+      "lat": 1.280528,
+      "lng": 103.871175
+    },
+    {
+      "name": "Maxwell Road Hawker Centre",
+      "lat": 1.280431,
+      "lng": 103.844822
+    },
+    {
+      "name": "Merlion Park",
+      "lat": 1.286789,
+      "lng": 103.854501
+    },
+    {
+      "name": "Mount Faber Park",
+      "lat": 1.273786,
+      "lng": 103.817496
+    },
+    {
+      "name": "National Museum of Singapore",
+      "lat": 1.296638,
+      "lng": 103.848665
+    },
+    {
+      "name": "Peranakan Museum",
+      "lat": 1.294367,
+      "lng": 103.849039
+    },
+    {
+      "name": "Red Dot Design Museum",
+      "lat": 1.280147,
+      "lng": 103.856321
+    },
+    {
+      "name": "Sentosa",
+      "lat": 1.249404,
+      "lng": 103.830321
+    },
+    {
+      "name": "Singapore Art Museum",
+      "lat": 1.297307,
+      "lng": 103.851062
+    },
+    {
+      "name": "Singapore Botanic Gardens",
+      "lat": 1.313840,
+      "lng": 103.815914
+    },
+    {
+      "name": "Singapore Discovery Centre",
+      "lat": 1.332690,
+      "lng": 103.678943
+    },
+    {
+      "name": "Singapore Flyer",
+      "lat": 103.678943,
+      "lng": 103.863137
+    },
+    {
+      "name": "Singapore River",
+      "lat": 1.289117,
+      "lng": 103.840466
+    },
+    {
+      "name": "Sri Mariamman Temple",
+      "lat": 1.282685,
+      "lng": 103.845130
+    },
+    {
+      "name": "Sultan Mosque",
+      "lat": 1.302242,
+      "lng": 103.859035
+    },
+    {
+      "name": "Sungei Buloh Nature Park",
+      "lat": 1.446719,
+      "lng": 103.730149
+    },
+    {
+      "name": "Universal Studios Singapore",
+      "lat": 1.254042,
+      "lng": 103.823808
+    },
+    {
+      "name": "Treetop Walk at MacRitchie Reservoir",
+      "lat": 1.360729,
+      "lng": 103.812522
+    },
+    {
+      "name": "The Padang",
+      "lat": 1.290556,
+      "lng": 103.853044
+    },
+    {
+      "name": "Singapore Zoo",
+      "lat": 1.404348,
+      "lng": 103.793023
+    }
+  ]
 }

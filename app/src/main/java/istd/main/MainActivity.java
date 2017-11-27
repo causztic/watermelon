@@ -13,44 +13,75 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import javax.security.auth.login.LoginException;
 
 
 public class MainActivity extends AppCompatActivity {
 
     // Variables to be accessed by other activities
     public double[] currentLatLng; // {lat, lng}
-    public Place[] placeList;
+    public Location[] locationList;
 
     // Variables used within MainActivity
     private TextView currentLoc;
-    private TextView visitingText;
-    private List<String> listOfStrings = new ArrayList<>();
+    private EditText visitingText;
+    private ArrayList<String> locationsToVisit = new ArrayList<>();
+    private int locationsLoaded = 0;
+    private ArrayList<String> autocompleteList = new ArrayList<>();
+    private String TAG = "Joel";
+    private String jsonData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        InputStream raw = getResources().openRawResource(R.raw.data);
+
+        try {
+            int size = raw.available();
+            byte[] buffer = new byte[size];
+            raw.read(buffer);
+            raw.close();
+            jsonData = new String(buffer, "UTF-8");
+            Log.d(TAG, jsonData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Change status bar color for SDK21 and above.
         if (Build.VERSION.SDK_INT >= 21) {
@@ -127,66 +158,36 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Manage the list of entered locations.
-
         ImageView addLocationButton = findViewById(R.id.EnterLocationButton);
-        visitingText = findViewById(R.id.VisitingText);
 
+        // Run a search for matching names as the user types the desired location.
+        // Open the JSON and parse
+        Gson gson = new Gson();
 
-        // Run a search for matching Places as the user types the desired location.
+        Location[] JSONLocationArray = gson.fromJson(jsonData, Location[].class);
 
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        for (Location loc : JSONLocationArray) {
+            Log.d(TAG, loc.toString());
+        }
 
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
-                .build();
-        autocompleteFragment.setFilter(typeFilter);
+        // Display the JSON places as autocomplete values
+        ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, autocompleteList);
+        final AutoCompleteTextView visitingText = findViewById(R.id.WhereTo);
+        visitingText.setAdapter(autoCompleteAdapter);
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                listOfStrings.add(String.valueOf(place.getName()));
-                StringBuilder sentence = new StringBuilder();
-                for (int i = 0; i < listOfStrings.size(); i++) {
+        // Edit the places text.
+        TextView placesText = findViewById(R.id.PlacesText);
 
-                    // if one word
-                    if (listOfStrings.size() == 1) {
-                        sentence.append(listOfStrings.get(i));
-                        break;
-                    }
-
-                    // if not last word
-                    if (i != listOfStrings.size()-1) {
-                        sentence.append(listOfStrings.get(i));
-                        sentence.append(", ");
-                    }
-                    // if last word
-                    else {
-                        sentence.append("and ");
-                        sentence.append(listOfStrings.get(i));
-                    }
-                }
-                visitingText.setText("Today I'll explore " + sentence.toString() + "!");
-            }
+        visitingText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i("Joel", "An error occurred: " + status);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String newPlace = (String) adapterView.getItemAtPosition(i);
+                locationsToVisit.add(newPlace);
+                Log.i(TAG, locationsToVisit.toString());
+                ((TextView) findViewById(R.id.PlacesText)).setText(locationsToVisit.toString());
             }
         });
-
-
-        addLocationButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                // add selected verified location to list of locations
-            }
-        });
-
-
 
         // Update the budget text to reflect the budget slider value.
         SeekBar budgetBar = findViewById(R.id.BudgetBar);

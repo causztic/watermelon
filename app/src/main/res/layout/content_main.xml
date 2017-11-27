@@ -93,7 +93,7 @@
                 android:layout_marginTop="200dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/VisitingText">
+                app:layout_constraintTop_toBottomOf="@+id/PlacesText">
 
                 <TextView
                     android:id="@+id/BudgetText"
@@ -198,29 +198,26 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/addlocation" />
 
-                <fragment
-                    android:id="@+id/place_autocomplete_fragment"
-                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                <AutoCompleteTextView
+                    android:id="@+id/WhereTo"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    android:hint="Where to?"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/EnterLocationButton"
-                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.47"
-                    tools:layout="@layout/place_autocomplete_fragment" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 
             <TextView
-                android:id="@+id/VisitingText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/PlacesText"
+                android:layout_width="0dp"
+                android:layout_height="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Search for a place you'd like to visit today."
                 android:textAlignment="center"
