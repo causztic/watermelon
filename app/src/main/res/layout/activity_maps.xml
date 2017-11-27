@@ -12,12 +12,14 @@
 
         <EditText
             android:id="@+id/TFaddress"
-            android:layout_width="0dp"
+            android:layout_width="105dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:hint="Enter your search here"/>
+            android:hint="Enter your search here"
+            android:inputType="text"
+            android:maxLines="1" />
         <Button
-            android:text="Search"
+            android:background="@drawable/ic_search_black_24dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

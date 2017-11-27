@@ -4,36 +4,45 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ZoomControls;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import istd.code.Location;
+import istd.code.LocationFactory;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
-    //TODO 1.1 - add these instance variables
     private GoogleMap mMap;
     private Marker marker;
     private ZoomControls zoom;
     private Button bMapType;
     private EditText location_tf;
     private Button bSearch;
+    private ArrayList<String> places = new ArrayList<>();
+    private Location[] locationsArray;
+    private HashMap<String,Location> lStringHashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        locationsArray = LocationFactory.createLocations(MapsActivity.this);
+        lStringHashMap = new HashMap<>();
+        for (int i = 0; i<locationsArray.length;i++){
+            lStringHashMap.put(locationsArray[i].getName(),locationsArray[i]);
+        }
+
         location_tf = findViewById(R.id.TFaddress);
 
         zoom = findViewById(R.id.zoom);
@@ -78,23 +94,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String location = location_tf.getText().toString();
-                List<Address> addressList=null;
-                if(location!=null &&!location.equals("")){
-                    Geocoder geocoder = new Geocoder(MapsActivity.this);
-                    try{
-                        addressList = geocoder.getFromLocationName(location,1);
-                    }catch(IOException ex){
-                        ex.printStackTrace();
-                    }
-                    Address address = addressList.get(0);
-                    String locality = address.getLocality();
-                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                String textInput = location_tf.getText().toString();
+                //String score =  FuzzySearch.extractSorted(textInput,lStringHashMap.keySet()).toString();
+                List<ExtractedResult> extractedResultList = FuzzySearch.extractSorted(textInput,lStringHashMap.keySet(),60);
+
+                if(!extractedResultList.isEmpty()){
+                    ExtractedResult extractedResult = extractedResultList.get(0);
+                    String location = extractedResult.getString();
+                    Log.i("yf",location);
+                    Location address = lStringHashMap.get(location);
+                    LatLng latLng = new LatLng(address.getLat(),address.getLng());
                     if(marker!=null){
                         marker.remove();
                     }
-                    marker = mMap.addMarker(new MarkerOptions().position(latLng).title(locality).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                    if (address.getCategory().equals("nature")){
+                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_terrain_black_24dp)));
+                    }
+                    if (address.getCategory().equals("worship")){
+                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_brightness_7_black_24dp)));
+                    }
+
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                }
+                else{
+                    List<Address> addressList = null;
+                    if (textInput!=null&&!textInput.isEmpty()){
+                        Geocoder geocoder = new Geocoder((MapsActivity.this));
+                        try {
+                            addressList = geocoder.getFromLocationName(textInput,1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Address address = addressList.get(0);
+                        Log.i("yf",address.toString());
+                        String name = address.getFeatureName();
+                        LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                        if (address.getCountryName().equals("Singapore")){
+                            if(marker!=null){
+                                marker.remove();
+                            }
+                            marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                        }
+                        else{
+                            Toast.makeText(MapsActivity.this, "Please enter a location in Singapore",Toast.LENGTH_LONG).show();
+                        }
+
+                    }
                 }
             }
         });
@@ -116,6 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String sydney = "Sydney";
         List<Address> addressList1 = null;
         // Add a marker in Sydney and move the camera
+
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         try{
             addressList1 = geocoder.getFromLocationName(sydney,1);
