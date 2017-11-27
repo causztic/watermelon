@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,6 +17,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.net.http.HttpResponseCache;
+import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +41,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import istd.code.Location;
+import istd.code.LocationFactory;
+import istd.graph.Graph;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -220,9 +232,23 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                MainActivity.this.startActivity(new Intent(MainActivity.this, SolverActivity.class));
             }
         });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        // to get locations based on json..
+        // create a http cache to hold results
+        try {
+            File httpCacheDir = new File(this.getBaseContext().getCacheDir(), "http");
+            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException e) {
+            Log.i("", "HTTP response cache installation failed:" + e);
+        }
 
         TextView settingsChanger = findViewById(R.id.SettingsLink);
         settingsChanger.setOnClickListener(new View.OnClickListener() {
@@ -238,6 +264,23 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLocationEnabled() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+
     }
 
     // Alert the user to turn on location settings if not on.
