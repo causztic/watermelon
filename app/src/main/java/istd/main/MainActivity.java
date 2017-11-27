@@ -46,19 +46,22 @@ import istd.code.FixedLocationFactory;
 public class MainActivity extends AppCompatActivity {
 
     // TODO: These are the variables to be accessed by other Activities.
-    public static ArrayList<FixedLocation> locationArrayList = new ArrayList<>();
+    public static ArrayList<FixedLocation> locationArrayList;
     public static int updatedBudget;
 
     // Variables used within MainActivity
     private TextView currentLoc;
-    private ArrayList<String> locationStringList = new ArrayList<>();
-    private ArrayList<String> autocompleteList = new ArrayList<>();
+    private ArrayList<String> locationStringList;
+    private ArrayList<String> autocompleteList;
     private String jsonData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        locationStringList = new ArrayList<>();
+        autocompleteList = new ArrayList<>();
+        locationArrayList  = new ArrayList<>();
 
         // Change status bar color for SDK21 and above.
         if (Build.VERSION.SDK_INT >= 21) {

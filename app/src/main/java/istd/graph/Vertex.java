@@ -61,6 +61,9 @@ public class Vertex {
 
     @Override
     public String toString() {
-        return name.equals("root") ? String.format("%f,%f", latlng[0], latlng[1]) : name;
+        if (this != null)
+            return name.equals("root") ? String.format("%f,%f", latlng[0], latlng[1]) : name;
+        else
+            return null;
     }
 }
