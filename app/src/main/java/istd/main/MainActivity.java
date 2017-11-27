@@ -13,7 +13,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,45 +23,31 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Array;
-import java.nio.Buffer;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import javax.security.auth.login.LoginException;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    // Variables to be accessed by other activities
-    public double[] currentLatLng; // {lat, lng}
-    public Location[] locationList;
+    // TODO: These are the variables to be accessed by other Activities.
+    public ArrayList<Location> locationArrayList = new ArrayList<>();
+    public int updatedBudget;
 
     // Variables used within MainActivity
     private TextView currentLoc;
-    private EditText visitingText;
-    private ArrayList<String> locationsToVisit = new ArrayList<>();
-    private int locationsLoaded = 0;
+    private ArrayList<String> locationStringList = new ArrayList<>();
     private ArrayList<String> autocompleteList = new ArrayList<>();
-    private String TAG = "Joel";
     private String jsonData;
 
     @Override
@@ -78,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             raw.read(buffer);
             raw.close();
             jsonData = new String(buffer, "UTF-8");
-            Log.d(TAG, jsonData);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -138,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
             currentLoc = findViewById(R.id.CurLocationText);
             double currentLatitude = location.getLatitude();
             double currentLongitude = location.getLongitude();
-            //currentLatLng = new double[] {currentLatitude, currentLongitude};
 
             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
             try {
@@ -156,18 +139,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
-        // Manage the list of entered locations.
-        ImageView addLocationButton = findViewById(R.id.EnterLocationButton);
-
         // Run a search for matching names as the user types the desired location.
         // Open the JSON and parse
         Gson gson = new Gson();
+        Type listType = new TypeToken<List<PlaceJSON>>(){}.getType();
+        ArrayList<PlaceJSON> temp = gson.fromJson(jsonData, listType);
+        final DataJSON JSONLocationArray = new DataJSON(temp);
 
-        Location[] JSONLocationArray = gson.fromJson(jsonData, Location[].class);
-
-        for (Location loc : JSONLocationArray) {
-            Log.d(TAG, loc.toString());
+        // Update both autocompleteList and locationArrayList with the places picked.
+        for (PlaceJSON place : JSONLocationArray.getPlaceList()) {
+            autocompleteList.add(place.getName());
+            Location location = new Location(LocationManager.NETWORK_PROVIDER);
+            location.setLatitude(place.getLat());
+            location.setLongitude(place.getLng());
         }
 
         // Display the JSON places as autocomplete values
@@ -175,17 +159,26 @@ public class MainActivity extends AppCompatActivity {
         final AutoCompleteTextView visitingText = findViewById(R.id.WhereTo);
         visitingText.setAdapter(autoCompleteAdapter);
 
-        // Edit the places text.
-        TextView placesText = findViewById(R.id.PlacesText);
-
         visitingText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String newPlace = (String) adapterView.getItemAtPosition(i);
-                locationsToVisit.add(newPlace);
-                Log.i(TAG, locationsToVisit.toString());
-                ((TextView) findViewById(R.id.PlacesText)).setText(locationsToVisit.toString());
+                locationStringList.add(newPlace);
+                ((TextView) findViewById(R.id.PlacesText)).setText(createPlaceMessage(locationStringList));
+                Location location = new Location(LocationManager.NETWORK_PROVIDER);
+
+                // Search for matching string
+                for (PlaceJSON p : JSONLocationArray.getPlaceList()) {
+                    if (p.getName() == newPlace) {
+                        location.setLatitude(p.getLat());
+                        location.setLongitude(p.getLng());
+                    }
+                }
+
+                locationArrayList.add(location);
+                visitingText.setText("");
+                Log.d("Joel", "LOCATION ADDED: " + newPlace + " at " + location.getLatitude() + ", " + location.getLongitude());
             }
         });
 
@@ -197,11 +190,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
-                int updatedBudget = seekBar.getProgress();
+                updatedBudget = seekBar.getProgress();
                 ((TextView) findViewById(R.id.budgetValue)).setText("$" + Integer.toString(updatedBudget));
 
                 if (updatedBudget == 0) {
                     ((TextView) findViewById(R.id.BudgetBlurb)).setText("Oops. Better luck hitching a ride.");
+                    Toast.makeText(getBaseContext(), "Oops. Better luck hitching a ride.", Toast.LENGTH_SHORT).show();
                 }
                 if (updatedBudget > 0 && updatedBudget < 51) {
                     ((TextView) findViewById(R.id.BudgetBlurb)).setText("");
@@ -209,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 if (updatedBudget == 51) {
                     ((TextView) findViewById(R.id.budgetValue)).setText("∞");
                     ((TextView) findViewById(R.id.BudgetBlurb)).setText("Do consider donating to watermelon's developers.");
+                    Toast.makeText(getBaseContext(), "Do consider donating to watermelon's developers.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -269,5 +264,29 @@ public class MainActivity extends AppCompatActivity {
                 });
         dialog.setCancelable(false);
         dialog.show();
+    }
+
+    private String createPlaceMessage(ArrayList<String> stringArrayList) {
+
+        if (stringArrayList.size() == 0) return "ayylmao";
+
+        String base = "";
+
+        if (stringArrayList.size() == 1) {
+            base = "Today I'm going to visit " + stringArrayList.get(0) + "!";
+        }
+
+        else if (stringArrayList.size() >= 1) {
+            base = "Today I'm going to visit ";
+            for (int i = 0; i < stringArrayList.size(); i++) {
+                if (i != stringArrayList.size() - 1) {
+                    base += stringArrayList.get(i) + ", ";
+                } else {
+                    base += "and " + stringArrayList.get(i) + "!";
+                }
+            }
+        }
+
+        return base;
     }
 }

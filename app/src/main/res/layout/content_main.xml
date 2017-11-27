@@ -30,9 +30,9 @@
                 android:id="@+id/HomeTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="88dp"
+                android:layout_marginTop="52dp"
                 android:fontFamily="sans-serif"
-                android:text="watermelon"
+                android:text="{watermelon}"
                 android:textAlignment="center"
                 android:textSize="30sp"
                 android:textStyle="bold"
@@ -45,8 +45,8 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/LocationLayout"
                 android:layout_width="match_parent"
-                android:layout_height="68dp"
-                android:layout_marginTop="128dp"
+                android:layout_height="58dp"
+                android:layout_marginTop="112dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -90,7 +90,7 @@
                 android:layout_height="98dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="64dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/PlacesText">
@@ -98,7 +98,7 @@
                 <TextView
                     android:id="@+id/BudgetText"
                     android:layout_width="match_parent"
-                    android:layout_height="26dp"
+                    android:layout_height="22dp"
                     android:text="What's today's budget?"
                     android:textAlignment="center"
                     android:textStyle="bold"
@@ -112,7 +112,7 @@
                     android:layout_width="163dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="6dp"
                     android:max="51"
                     android:progress="15"
                     android:thumb="@color/colorPrimaryDark"
@@ -126,7 +126,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="6dp"
                     android:text="null"
                     android:textAlignment="center"
                     android:textSize="14sp"
@@ -138,7 +138,7 @@
                 <TextView
                     android:id="@+id/BudgetBlurb"
                     android:layout_width="228dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
@@ -157,6 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="36dp"
                 android:background="@color/colorPrimaryDark"
                 android:text="Find me a route"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -167,8 +168,8 @@
                 android:id="@+id/SettingsLink"
                 android:layout_width="match_parent"
                 android:layout_height="15dp"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginBottom="60dp"
+                android:layout_marginTop="24dp"
                 android:fontFamily="sans-serif-smallcaps"
                 android:text="change app settings"
                 android:textAlignment="center"
@@ -186,18 +187,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/LocationLayout"
                 tools:layout_editor_absoluteX="8dp">
 
-                <ImageView
-                    android:id="@+id/EnterLocationButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/addlocation" />
-
                 <AutoCompleteTextView
                     android:id="@+id/WhereTo"
                     android:layout_width="0dp"
@@ -208,22 +197,28 @@
                     android:layout_marginTop="8dp"
                     android:hint="Where to?"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/EnterLocationButton"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.454" />
 
             </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/PlacesText"
                 android:layout_width="0dp"
-                android:layout_height="16dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Search for a place you'd like to visit today."
                 android:textAlignment="center"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
                 tools:layout_editor_absoluteX="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"></LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
 
