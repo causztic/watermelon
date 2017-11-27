@@ -2,9 +2,6 @@ package istd.graph;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -15,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

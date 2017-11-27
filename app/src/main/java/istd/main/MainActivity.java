@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: These are the variables to be accessed by other Activities.
     public static ArrayList<FixedLocation> locationArrayList;
-    public static int updatedBudget;
+    public static int updatedBudget = 15;
 
     // Variables used within MainActivity
     private TextView currentLoc;
@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         SeekBar budgetBar = findViewById(R.id.BudgetBar);
         ((TextView) findViewById(R.id.budgetValue)).setText("$" + Integer.toString(budgetBar.getProgress()));
         budgetBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 

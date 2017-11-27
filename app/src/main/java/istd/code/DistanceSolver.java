@@ -175,7 +175,7 @@ public class DistanceSolver {
                 budget += edge.getCost();
                 travelTime += edge.getTravelTime();
             }
-            if (travelTime < shortestTime){
+            if (travelTime < shortestTime && budget < graph.getBudget()){
                 mostEfficientTour = tour;
                 shortestTime = travelTime;
             }
