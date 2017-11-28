@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location address;
     private String encoding = "UTF-8";
     private String location ="";
-    private String result = "";
+    private MarkerOptions markerOptions;
     private TextView snippet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,36 +115,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(!extractedResultList.isEmpty()){
                     ExtractedResult extractedResult = extractedResultList.get(0);
                     location = extractedResult.getString();
-                    new GetWikiTask().execute();
-                    System.out.println(result);
 
                     address = lStringHashMap.get(location);
                     LatLng latLng = new LatLng(address.getLat(),address.getLng());
-                    if(marker!=null){
-                        marker.remove();
-                    }
-                    if (address.getCategory().equals("nature")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_terrain_black_24dp)).snippet(result));
-                    }
-                    if (address.getCategory().equals("worship")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_brightness_7_black_24dp)).snippet(result));
-                    }
-                    if (address.getCategory().equals("museum")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_account_balance_black_24dp)).snippet(result));
-                    }
-                    if (address.getCategory().equals("party")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_bar_black_24dp)).snippet(result));
-                    }
-                    if (address.getCategory().equals("arts")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_palette_black_24dp)).snippet(result));
-                    }
-                    if (address.getCategory().equals("food")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_dining_black_24dp)).snippet(result));
-                    }
-                    if (address.getCategory().equals("attraction")){
-                        marker = mMap.addMarker(new MarkerOptions().position(latLng).title(address.getName()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_see_black_24dp)).snippet(result));
-                    }
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                    markerOptions = new MarkerOptions().position(latLng).title(address.getName());
+                    markerOptions.snippet("");
+
+                    new GetWikiTask().execute();
+
+                    if (marker != null)
+                        marker.remove();
+
+                    switch (address.getCategory()){
+                        case "nature":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_terrain_black_24dp));
+                            break;
+                        case "worship":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_brightness_7_black_24dp));
+                            break;
+                        case "museum":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_account_balance_black_24dp));
+                            break;
+                        case "party":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_bar_black_24dp));
+                            break;
+                        case "arts":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_palette_black_24dp));
+                            break;
+                        case "food":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_dining_black_24dp));
+                            break;
+                        case "attraction":
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_see_black_24dp));
+                            break;
+                    }
+                    marker = mMap.addMarker(markerOptions);
                 }
                 else{
                     List<Address> addressList = null;
@@ -249,6 +255,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public class GetWikiTask extends AsyncTask<URL,Void,String>{
+
         @Override
         protected String doInBackground(URL... urls) {
             try{
@@ -262,14 +269,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 BufferedReader in = new BufferedReader(new InputStreamReader(httpcon.getInputStream()));
                 String responseSB = in.lines().collect(Collectors.joining());
                 in.close();
-                result = responseSB.split("extract\":\"")[1];
+                String result = responseSB.split("extract\":\"")[1];
                 return result;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return result;
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            address = lStringHashMap.get(location);
+            LatLng latLng = new LatLng(address.getLat(),address.getLng());
+
+            markerOptions.snippet(result);
+            marker.remove();
+            marker = mMap.addMarker(markerOptions);
         }
     }
 }
