@@ -173,18 +173,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
+    
     // On restart when app exited or another app takes over
     @Override
     protected void onRestart() {
