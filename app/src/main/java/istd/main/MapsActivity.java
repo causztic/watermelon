@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 import istd.code.FixedLocation;
 import istd.code.FixedLocationFactory;
-import istd.code.LocationFactory;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
