@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/info_nature"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/ic_local_see_black_24dp"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/nature_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nature"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/nature_snippet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nature" />
+
+    </LinearLayout>
+</LinearLayout>
