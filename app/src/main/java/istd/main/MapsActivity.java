@@ -1,14 +1,18 @@
 package istd.main;
 
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import android.util.Log;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,6 +64,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String location ="";
     private MarkerOptions markerOptions;
     private TextView snippet;
+    private ViewDialog fullText;
+    private Button customButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,7 +116,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 String textInput = location_tf.getText().toString();
-                //String score =  FuzzySearch.extractSorted(textInput,lStringHashMap.keySet()).toString();
                 List<ExtractedResult> extractedResultList = FuzzySearch.extractSorted(textInput,lStringHashMap.keySet(),60);
 
                 if(!extractedResultList.isEmpty()){
@@ -155,22 +161,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else{
                     List<Address> addressList = null;
                     if (textInput!=null&&!textInput.isEmpty()){
+                        location = textInput;
                         Geocoder geocoder = new Geocoder((MapsActivity.this));
                         try {
-                            addressList = geocoder.getFromLocationName(textInput,1);
+                            addressList = geocoder.getFromLocationName(location,1);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         Address address = addressList.get(0);
-                        //Log.i("yf",address.toString());
                         String name = address.getFeatureName();
                         LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+
+
                         if (address.getCountryName().equals("Singapore")){
                             if(marker!=null){
                                 marker.remove();
                             }
-                            marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_see_black_24dp)));
+                            new GetWikiTask().execute();
+                            markerOptions = new MarkerOptions().position(latLng).title(name).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_local_see_black_24dp));
+                            markerOptions.snippet("");
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+
                         }
                         else{
                             Toast.makeText(MapsActivity.this, "Please enter a location in Singapore",Toast.LENGTH_LONG).show();
@@ -211,6 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     ImageView img = v.findViewById(R.id.info_nature);
                     TextView name = v.findViewById(R.id.nature_name);
                     snippet = v.findViewById(R.id.nature_snippet);
+                    snippet.setMovementMethod(new ScrollingMovementMethod());
                     if (address!=null) {
                         if (address.getCategory().equals("nature")){
                             img.setImageResource(R.mipmap.ic_terrain_black_24dp);
@@ -239,6 +251,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     return  v;
                 }
             });
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    fullText = new ViewDialog();
+                    fullText.showDialog(MapsActivity.this,snippet.getText().toString(),markerOptions.getTitle());
+                    fullText.closeDialog();
+                }
+            });
         }
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         try{
@@ -254,14 +274,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng1,15));
     }
 
-    public class GetWikiTask extends AsyncTask<URL,Void,String>{
 
+
+    public class GetWikiTask extends AsyncTask<URL,Void,String>{
         @Override
         protected String doInBackground(URL... urls) {
             try{
-                String searchText = location+"Wikipedia";
+                String searchText = location +" Wikipedia";
                 org.jsoup.nodes.Document google = Jsoup.connect("https://www.google.com/search?q=" + URLEncoder.encode(searchText, encoding)).userAgent("Mozilla/5.0").get();
-                String wikipediaURL = google.getElementsByTag("cite").get(0).text();
+                String wikipediaURL = google.getElementsByTag("cite").get(0).text().split("–")[0];
                 String wikipediaApiJSON = "https://www.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles="
                         + URLEncoder.encode(wikipediaURL.substring(wikipediaURL.lastIndexOf("/") + 1, wikipediaURL.length()), encoding);
                 HttpURLConnection httpcon = (HttpURLConnection) new URL(wikipediaApiJSON).openConnection();
@@ -269,7 +290,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 BufferedReader in = new BufferedReader(new InputStreamReader(httpcon.getInputStream()));
                 String responseSB = in.lines().collect(Collectors.joining());
                 in.close();
-                String result = responseSB.split("extract\":\"")[1];
+                String result = responseSB.split("\"extract\":\"")[1];
+                result = result.replace("\\n", "\n");
+                result = result.replaceAll("[!@#$%&*()_+=|<>?{}\\[\\]~-]"," ");
                 return result;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -278,16 +301,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return "";
         }
-
         @Override
         protected void onPostExecute(String result) {
-
             address = lStringHashMap.get(location);
-            LatLng latLng = new LatLng(address.getLat(),address.getLng());
-
             markerOptions.snippet(result);
             marker.remove();
             marker = mMap.addMarker(markerOptions);
+        }
+    }
+
+    public class ViewDialog {
+        private Dialog dialog;
+        public void showDialog(Activity activity, String msg1,String msg2){
+            dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.custom_dialog);
+
+            TextView dialogText = dialog.findViewById(R.id.custom_dialog);
+            dialogText.setText(msg1);
+            TextView titleText = dialog.findViewById(R.id.custom_title);
+            titleText.setText(msg2);
+            dialog.show();
+        }
+        public void closeDialog(){
+            Button button = dialog.findViewById(R.id.custom_button);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
         }
     }
 }
