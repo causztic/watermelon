@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Display the JSON places as autocomplete values
         final AutoCompleteTextView visitingText = findViewById(R.id.WhereTo);
+
         autoCompleteAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, fuzzyAutocompleteList);
         visitingText.setAdapter(autoCompleteAdapter);
 
@@ -193,6 +194,16 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(i);
             }
         });
+
+        Button searchMapsButton = findViewById(R.id.GoToSearchMaps);
+        searchMapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, MapsActivity.class);
+                MainActivity.this.startActivity(i);
+            }
+        });
+
     }
 
     @Override
