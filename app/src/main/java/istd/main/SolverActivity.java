@@ -4,11 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 
-import java.util.Arrays;
 import java.util.List;
 
 import istd.code.FixedLocation;
-import istd.code.FixedLocationFactory;
 import istd.graph.Graph;
 
 public class SolverActivity extends AppCompatActivity {
