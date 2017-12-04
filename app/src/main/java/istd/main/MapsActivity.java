@@ -239,7 +239,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     ImageView img = v.findViewById(R.id.info_nature);
                     TextView name = v.findViewById(R.id.nature_name);
                     snippet = v.findViewById(R.id.nature_snippet);
-                    snippet.setMovementMethod(new ScrollingMovementMethod());
                     if (address!=null) {
                         if (address.getCategory().equals("nature")){
                             img.setImageResource(R.mipmap.ic_terrain_black_24dp);
