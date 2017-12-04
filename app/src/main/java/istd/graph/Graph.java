@@ -28,7 +28,7 @@ import istd.main.R;
 
 public class Graph extends AsyncTask<String, Void, List<Edge>> {
 
-    private final String PHANTOM_URL = "http://10.0.2.2:8080/";
+    private final String PHANTOM_URL = "http://watermelon-phantom.herokuapp.com/";
     private Vertex root;
     private List<Vertex> vertices;
     private List<Edge> edges;
