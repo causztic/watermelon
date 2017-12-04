@@ -67,6 +67,6 @@ public class Edge implements Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        return Double.compare(this.getCost(), ((Edge)o).getCost());
+        return Double.compare(this.getTravelTime(), ((Edge)o).getTravelTime());
     }
 }

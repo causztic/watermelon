@@ -93,7 +93,7 @@ public class Graph extends AsyncTask<String, Void, List<Edge>> {
         }
 
         try {
-            urlConnection = (HttpURLConnection) new URL(url + "/" + vertex1 + "/" + vertex2 + "/" + specialMode).openConnection();
+            urlConnection = (HttpURLConnection) new URL(url + vertex1 + "/" + vertex2 + "/" + specialMode).openConnection();
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder builder = new StringBuilder();
             String line;
