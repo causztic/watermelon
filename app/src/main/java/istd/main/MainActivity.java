@@ -17,8 +17,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -39,10 +37,6 @@ import java.util.Locale;
 import istd.code.FixedLocation;
 import istd.code.FixedLocationFactory;
 
-import me.xdrop.fuzzywuzzy.model.ExtractedResult;
-
-import static me.xdrop.fuzzywuzzy.FuzzySearch.extractSorted;
-
 public class MainActivity extends AppCompatActivity {
 
     // TODO: These are the variables to be accessed by other Activities.
@@ -58,12 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView settingsChanger;
     private ArrayList<String> locationStringList;
     private ArrayList<String> autocompleteList;
-    private ArrayList<String> fuzzyAutocompleteList;
-    private List<ExtractedResult> didYouMean;
     private ArrayAdapter<String> autoCompleteAdapter;
-
-    private int searchThreshold = 30;
-    private String TAG = "Joel"; // Debug
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         locationStringList = new ArrayList<>();
-        fuzzyAutocompleteList = new ArrayList<>();
         autocompleteList = new ArrayList<>();
         locationArrayList = new ArrayList<>();
 
@@ -103,37 +91,8 @@ public class MainActivity extends AppCompatActivity {
         // Display the JSON places as autocomplete values
         final AutoCompleteTextView visitingText = findViewById(R.id.WhereTo);
 
-        autoCompleteAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, fuzzyAutocompleteList);
+        autoCompleteAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, autocompleteList);
         visitingText.setAdapter(autoCompleteAdapter);
-
-        visitingText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                fuzzyAutocompleteList.clear();
-                Log.i(TAG, "onTextChanged: fuzzyAutocompleteList is " + fuzzyAutocompleteList.toString());
-                String inputPlace = visitingText.getText().toString();
-                Log.i(TAG, "onTextChanged: input Text is " + inputPlace);
-                didYouMean = extractSorted(inputPlace, autocompleteList);
-                Log.i(TAG, "onTextChanged: did you mean " + didYouMean.toString());
-                for (ExtractedResult result : didYouMean) {
-                    if (result.getScore() >= searchThreshold) {
-                        fuzzyAutocompleteList.add(result.getString());
-                    }
-                }
-                Log.i(TAG, "onTextChanged: now fuzzyAutocompleteList is " + fuzzyAutocompleteList.toString());
-                autoCompleteAdapter.clear();
-                autoCompleteAdapter.addAll(fuzzyAutocompleteList);
-                autoCompleteAdapter.notifyDataSetChanged();
-                Log.i(TAG, "onTextChanged: fuzzyAutocompleteList has this many items " + fuzzyAutocompleteList.size());
-                Log.i(TAG, "onTextChanged: autocomplete adapter has this many items: " + autoCompleteAdapter.getCount());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
 
         visitingText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -190,8 +149,13 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, SolverActivity.class);
-                MainActivity.this.startActivity(i);
+                if (locationArrayList.size() != 0 | locationArrayList != null) {
+                    Intent i = new Intent(MainActivity.this, SolverActivity.class);
+                    MainActivity.this.startActivity(i);
+                } else {
+                    Toast.makeText(getBaseContext(), "Please search for at least one location.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -232,6 +196,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        // Force check location
+        forceLocation();
+
+        placesText.setText("Search for a place you'd like to visit today.");
+        budgetBlurb.setText("");
+        budgetBar.setProgress(15);
+
+        locationStringList = new ArrayList<>();
+        autocompleteList = new ArrayList<>();
+        locationArrayList = new ArrayList<>();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // Force check location
         forceLocation();
 
