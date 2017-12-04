@@ -28,7 +28,7 @@ import istd.main.R;
 
 public class Graph extends AsyncTask<String, Void, List<Edge>> {
 
-    private final String PHANTOM_URL = "http://watermelon-phantom.herokuapp.com/";
+    private final String PHANTOM_URL = "http://10.0.2.2:3000/";
     private Vertex root;
     private List<Vertex> vertices;
     private List<Edge> edges;
@@ -45,11 +45,13 @@ public class Graph extends AsyncTask<String, Void, List<Edge>> {
         this.activity = activity;
 
         // create the root vertex and the other locations as vertices.
-        root = new Vertex("root", locations.remove(0));
+        root = new Vertex(locations.get(0).getName());
         vertices.add(root);
-        for (FixedLocation location : locations) {
+        for (FixedLocation location : locations.subList(2, locations.size())) {
             vertices.add(new Vertex(location.getName()));
         }
+
+        System.out.println(vertices.toString());
 
         generateAllEdges();
 
@@ -146,18 +148,18 @@ public class Graph extends AsyncTask<String, Void, List<Edge>> {
                 if (publicCost < budget) {
                     // only add edges if the budget at least allows this mode of transport.
                     addToEdges(vertex, new Edge(vertex, vertex2, publicTravelTime, publicCost, MODE.PUBLIC));
-                    if (!vertex.getName().equals("root"))
+                    if (!vertex.equals(root))
                         addToEdges(vertex2, new Edge(vertex2, vertex, publicTravelTime, publicCost, MODE.PUBLIC));
                 }
 
                 if (taxiCost < budget) {
                     addToEdges(vertex, new Edge(vertex, vertex2, taxiTravelTime, taxiCost, MODE.TAXI));
-                    if (!vertex.getName().equals("root"))
+                    if (!vertex.equals(root))
                         addToEdges(vertex2, new Edge(vertex2, vertex, taxiTravelTime, taxiCost, MODE.TAXI));
                 }
 
                 addToEdges(vertex, new Edge(vertex, vertex2, walkingTravelTime, 0, MODE.WALK));
-                if (!vertex.getName().equals("root"))
+                if (!vertex.equals(root))
                     addToEdges(vertex2, new Edge(vertex2, vertex, walkingTravelTime, 0, MODE.WALK));
 
             }

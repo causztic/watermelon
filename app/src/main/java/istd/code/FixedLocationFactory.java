@@ -34,6 +34,9 @@ public class FixedLocationFactory {
 
     public static FixedLocation createFixedLocationFromLocation(Location location){
         FixedLocation fl = new FixedLocation();
+        if (location.getProvider().equals("DEFAULT"))
+            fl.setName("Changi Airport");
+
         fl.setLat(location.getLatitude());
         fl.setLng(location.getLongitude());
         return fl;

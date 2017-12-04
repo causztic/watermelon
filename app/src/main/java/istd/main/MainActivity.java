@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
         locationStringList = new ArrayList<>();
         autocompleteList = new ArrayList<>();
-        locationArrayList = new ArrayList<>();
+        //locationArrayList = new ArrayList<>();
     }
 
     @Override
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
 
         locationStringList = new ArrayList<>();
         autocompleteList = new ArrayList<>();
-        locationArrayList = new ArrayList<>();
+        //locationArrayList = new ArrayList<>();
     }
 
     @Override
@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 if (location == null) {
                     // if all fail, default to changi airport
-                    location = new Location("");
+                    location = new Location("DEFAULT");
                     location.setLatitude(1.3568);
                     location.setLongitude(103.9891);
                 }

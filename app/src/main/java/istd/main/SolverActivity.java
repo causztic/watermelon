@@ -19,7 +19,6 @@ public class SolverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_solver);
         progressBar = findViewById(R.id.progressBar);
         List<FixedLocation> locations = MainActivity.locationArrayList;
-        System.out.println(locations.size());
         try {
             Graph graph = new Graph(locations, MainActivity.updatedBudget, this);
         } catch (Exception e) {

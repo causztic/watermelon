@@ -17,17 +17,18 @@ public class Vertex {
     private final double[] latlng;
     private List<Edge> edges;
 
-    Vertex(String name, FixedLocation location) {
-        double[] latlng = { location.getLat(), location.getLng() };
-        this.name =  name;
-        this.latlng = latlng;
+    Vertex(String name){
+        this.name = name;
+        this.latlng = new double[2];
         this.edges = new ArrayList<>();
     }
 
-    Vertex(String name){
-        this.name = name;
-        this.latlng = null;
-        this.edges = new ArrayList<>();
+    public double getLatitude(){
+        return latlng[0];
+    }
+
+    public double getLongitude(){
+        return latlng[1];
     }
 
     public void addEdge(Edge edge){
