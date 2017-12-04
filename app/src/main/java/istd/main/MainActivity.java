@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (locationArrayList.size() != 0 | locationArrayList != null) {
+                if (locationArrayList.size() != 0 || locationArrayList != null) {
                     Intent i = new Intent(MainActivity.this, SolverActivity.class);
                     MainActivity.this.startActivity(i);
                 } else {
